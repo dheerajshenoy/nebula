@@ -1,7 +1,7 @@
 - [X] Window move & resize on mod + click
 - [X] Focus window on hover
+- [X] Window Border
 - [ ] Workspaces
 - [ ] Focus window
-- [ ] Window Border
 - [ ] Layouts
 - [ ] Waybar workspaces support
