@@ -1,0 +1,5 @@
+- [ ] Workspaces
+- [ ] Focus window
+- [ ] Window Border
+- [ ] Layouts
+- [ ] Waybar workspaces support
