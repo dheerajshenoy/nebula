@@ -1,5 +1,5 @@
 - [X] Window move & resize on mod + click
-- [ ] Focus window on hover
+- [X] Focus window on hover
 - [ ] Workspaces
 - [ ] Focus window
 - [ ] Window Border

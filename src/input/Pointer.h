@@ -14,6 +14,8 @@ class Pointer final : public LPointer {
 public:
     Pointer(const void *params) noexcept;
 
+inline void set_focus_on_hover(const bool &state) noexcept { m_focus_on_hover = state; }
+
 void pointerMoveEvent(const LPointerMoveEvent &event) override;
 void pointerButtonEvent(const LPointerButtonEvent &event) override;
 void pointerScrollEvent(const LPointerScrollEvent &event) override;
@@ -35,6 +37,7 @@ bool maybeMoveOrResize(const LPointerButtonEvent &event) noexcept;
 
 private:
     LWeak<LView> m_cursorOwner;
+    bool m_focus_on_hover = false;
 };
 
 #endif // POINTER_H

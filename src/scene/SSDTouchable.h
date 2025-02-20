@@ -34,9 +34,7 @@ public:
     void pointerEnterEvent(const LPointerEnterEvent &event) override;
     void pointerLeaveEvent(const LPointerLeaveEvent &event) override;
     void pointerMoveEvent(const LPointerMoveEvent &event) override;
-
     void touchDownEvent(const LTouchDownEvent &event) override;
-
     bool nativeMapped() const noexcept override;
 };
 

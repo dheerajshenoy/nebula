@@ -48,26 +48,31 @@ void Pointer::pointerMoveEvent(const LPointerMoveEvent &event)
         return;
 
 
-    // TODO: Auto Focus on Mouse Hover. This is incomplete.
-
-    LSurface* surfaceUnderCursor = surfaceAt(cursor()->pos());
-    if (surfaceUnderCursor && surfaceUnderCursor->layer() != Louvre::LLayerBackground) {
-        setFocus(surfaceUnderCursor);
-        seat()->pointer()->setFocus(surfaceUnderCursor);
-        seat()->keyboard()->setFocus(surfaceUnderCursor);
-        surfaceUnderCursor->raise();
-        // m_cursorOwner = surfaceUnderCursor->views();
+    if (m_focus_on_hover) {
+        Surface* surfaceUnderCursor = (Surface*)surfaceAt(cursor()->pos());
+        if (surfaceUnderCursor) {
+            if (surfaceUnderCursor->layer() != Louvre::LLayerBackground) {
+                setFocus(surfaceUnderCursor);
+                seat()->pointer()->setFocus(surfaceUnderCursor);
+                seat()->keyboard()->setFocus(surfaceUnderCursor);
+                surfaceUnderCursor->raise();
+                auto tl = surfaceUnderCursor->tl();
+                if (tl && !tl->activated()) {
+                    tl->configureState(tl->pendingConfiguration().state | LToplevelRole::Activated);
+                }
+                // m_cursorOwner = surfaceUnderCursor->views();
+            }
+        }
     }
 
 
-    // if (focus() && focus()->layer() != Louvre::LLayerBackground) {
-    //     cursor()->setCursor(focus()->client()->lastCursorRequest());
-    // }
-    // else
-    //     {
-    //         cursor()->useDefault();
-    //         cursor()->setVisible(true);
-    //     }
+    if (focus() && focus()->layer() != Louvre::LLayerBackground) {
+        cursor()->setCursor(focus()->client()->lastCursorRequest());
+    }
+    else {
+        cursor()->useDefault();
+        cursor()->setVisible(true);
+    }
 
 }
 
