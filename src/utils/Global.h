@@ -15,29 +15,46 @@ class Seat;
 
 /* This is just a utility for quick access to the Compositor members and
  * to prevent type casting all the time */
-class G
-{
+class G {
 public:
 
-    enum ViewHint
-    {
-        SSDEdge = 1
-    };
+enum ViewHint
+{
+    SSDEdge = 1
+};
 
-    static Compositor *compositor() noexcept
-    {
-        return (Compositor*)Louvre::compositor();
-    }
+static Compositor *compositor() noexcept
+{
+    return (Compositor*)Louvre::compositor();
+}
 
-    static Seat *seat() noexcept
-    {
-        return (Seat*)Louvre::seat();
-    }
+static Seat *seat() noexcept
+{
+    return (Seat*)Louvre::seat();
+}
 
-    static Scene &scene() noexcept;
-    static LayerView *layers() noexcept;
-    static Assets *assets() noexcept;
-    static Systemd *systemd() noexcept;
+static Scene &scene() noexcept;
+static LayerView *layers() noexcept;
+static Assets *assets() noexcept;
+static Systemd *systemd() noexcept;
+
+struct Cursors
+{
+    LXCursor *arrow = nullptr;
+    LXCursor *hand2 = nullptr;
+    LXCursor *top_left_corner = nullptr;
+    LXCursor *top_right_corner = nullptr;
+    LXCursor *bottom_left_corner = nullptr;
+    LXCursor *bottom_right_corner = nullptr;
+    LXCursor *left_side = nullptr;
+    LXCursor *top_side = nullptr;
+    LXCursor *right_side = nullptr;
+    LXCursor *bottom_side = nullptr;
+    LXCursor *move = nullptr;
+};
+
+static Cursors &cursors() noexcept;
+
 };
 
 #endif // GLOBAL_H

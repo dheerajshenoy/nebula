@@ -11,6 +11,20 @@ LView *Surface::getView() noexcept
     return &view;
 }
 
+ToplevelRole *Surface::closestToplevelParent() const noexcept
+{
+    const LSurface *surface { this };
+
+    while (surface->parent())
+        {
+            if (surface->parent()->toplevel())
+                return static_cast<ToplevelRole*>(surface->parent()->toplevel());
+            surface = surface->parent();
+        }
+
+    return nullptr;
+}
+
 bool Surface::hasMappedChildSurface() const noexcept
 {
     for (LSurface *child : children())

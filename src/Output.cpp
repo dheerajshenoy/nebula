@@ -6,9 +6,8 @@
 #include "Surface.h"
 #include "utils/Global.h"
 
-void Output::Output(const void* params)
+Output::Output(const void* params) :LOutput(params)
 {
-    m_workspaces.reserve(9);
     m_current_workspace = 0;
 }
 

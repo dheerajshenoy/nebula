@@ -2,6 +2,7 @@
 #define KEYBOARD_H
 
 #include <LKeyboard.h>
+#include <LCursor.h>
 
 using namespace Louvre;
 

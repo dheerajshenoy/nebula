@@ -1,6 +1,8 @@
 #include "Global.h"
 #include "../Compositor.h"
 
+static G::Cursors xCursors;
+
 Scene &G::scene() noexcept
 {
     return compositor()->scene;
@@ -19,4 +21,9 @@ Assets *G::assets() noexcept
 Systemd *G::systemd() noexcept
 {
     return compositor()->systemd.get();
+}
+
+G::Cursors &G::cursors() noexcept
+{
+    return xCursors;
 }

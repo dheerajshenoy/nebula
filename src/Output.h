@@ -5,6 +5,7 @@
 #include <LSolidColorView.h>
 #include <vector>
 
+class Workspace;
 class Surface;
 
 using namespace Louvre;
@@ -32,7 +33,7 @@ using namespace Louvre;
  */
 class Output final : public LOutput {
 public:
-    Output(const void * params) noexcept;
+    Output(const void * params);
 
 /* Here you can initialize OpenGL ES 2.0 rendering toolkits, shaders, etc., if needed,
  * or use the painter() utility. We use LScene instead, which efficiently renders views for you,
@@ -77,7 +78,6 @@ bool tryDirectScanout(Surface *surface) noexcept;
 void setCurrentWorkspace(const int &n) noexcept;
 
 private:
-    std::vector<Workspace> m_workspaces;
     int m_current_workspace;
     // Layout m_layout; // TODO: Holds the layout of the output
 };
