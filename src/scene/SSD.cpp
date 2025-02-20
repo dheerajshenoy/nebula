@@ -42,6 +42,7 @@ SSD::~SSD()
 void SSD::updateGeometry() noexcept
 {
     const LMargins extraGeo { toplevel->extraGeometry() };
+
     setSize(toplevel->windowGeometry().size());
 
     if (m_titlebar_shown) {
@@ -51,8 +52,8 @@ void SSD::updateGeometry() noexcept
         // maximize.setPos(close.nativePos().x() + close.size().w() + extraGeo.left, close.nativePos().y());
         // minimize.setPos(maximize.nativePos().x() + maximize.size().w() + extraGeo.left, maximize.nativePos().y());
     } else {
-        titlebar.setPos(-extraGeo.left, -extraGeo.top / 2);
-        titlebar.setSize(size().width() + extraGeo.left + extraGeo.right, extraGeo.top / 2);
+        titlebar.setPos(-extraGeo.left, -extraGeo.top);
+        titlebar.setSize(size().width() + extraGeo.left + extraGeo.right, extraGeo.top);
     }
 
     L.setSize(extraGeo.left, size().h());

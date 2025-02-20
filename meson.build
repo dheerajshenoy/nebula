@@ -53,7 +53,6 @@ sources = files(
     'src/scene/SSD.cpp',
     'src/scene/SSDTouchable.cpp',
     'src/scene/SurfaceView.cpp',
-    'src/scene/WindowBorder.cpp',
 
     # Utils
     'src/utils/Assets.cpp',

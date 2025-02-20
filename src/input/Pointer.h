@@ -37,7 +37,7 @@ bool maybeMoveOrResize(const LPointerButtonEvent &event) noexcept;
 
 private:
     LWeak<LView> m_cursorOwner;
-    bool m_focus_on_hover = false;
+    bool m_focus_on_hover = true;
 };
 
 #endif // POINTER_H

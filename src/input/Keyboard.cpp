@@ -31,11 +31,16 @@ void Keyboard::keyEvent(const LKeyboardKeyEvent &event)
         && event.state() == LKeyboardKeyEvent::Released)
         LLauncher::launch(SETTINGS_SESSION_LOCK_CLIENT);
 
-    Output *output { (Output*) cursor()->output() };
-
     const bool LEFT_META  { isKeyCodePressed(KEY_LEFTMETA)  };
     const bool LEFT_SHIFT { isKeyCodePressed(KEY_LEFTSHIFT) };
     const bool LEFT_ALT   { isKeyCodePressed(KEY_LEFTALT)   };
     const bool LEFT_CTRL  { isKeyCodePressed(KEY_LEFTCTRL)  };
+
+    const std::string &terminal = "alacritty";
+
+    // Launch terminal
+    if (LEFT_META && LEFT_SHIFT && event.keyCode() == KEY_ENTER) {
+        LLauncher::launch(terminal);
+    }
 
 }

@@ -6,7 +6,6 @@
 #include <LSolidColorView.h>
 #include <LWeak.h>
 #include "SSDTouchable.h"
-#include "WindowBorder.hpp"
 
 using namespace Louvre;
 
@@ -42,7 +41,8 @@ SSDTouchable R  { this, SSDTouchable::Edge, LEdgeRight, this };
 // Border for active/inactive window
 
 private:
-bool m_titlebar_shown = false;
+    bool m_titlebar_shown = false;
+    int m_border_width = 3; // TODO: Add this somewhere
 
 };
 

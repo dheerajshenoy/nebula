@@ -11,6 +11,8 @@ class Keyboard final : public LKeyboard
 public:
     Keyboard(const void *params) noexcept;
     void keyEvent(const LKeyboardKeyEvent &event) override;
+
+private:
 };
 
 #endif // KEYBOARD_H

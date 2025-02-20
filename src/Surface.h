@@ -3,6 +3,9 @@
 
 #include <LSurface.h>
 #include "scene/SurfaceView.h"
+#include <LCursor.h>
+#include "Compositor.h"
+#include "Output.h"
 
 using namespace Louvre;
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include <LCompositor.h>
 #include <LLayerView.h>
 #include <LSceneView.h>

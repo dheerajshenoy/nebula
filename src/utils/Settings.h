@@ -29,13 +29,13 @@
  */
 
 /* Ennable SSD for clients that support it */
-#define SETTINGS_SSD
+#define SETTINGS_SSD 0
 
 /* SSD titlebar/edges size */
-#define SETTINGS_SSD_EXTRA_GEOMETRY { .left = 8, .top = 20, .right = 8, .bottom = 8 }
+#define SETTINGS_SSD_EXTRA_GEOMETRY { .left = 3, .top = 3, .right = 3, .bottom = 3 }
 
 /* SSD titlebar/edges color */
-#define SETTINGS_SSD_COLOR_ACTIVE {0.1f, 0.1f, 0.3f, 1.f}
+#define SETTINGS_SSD_COLOR_ACTIVE {0.8f, 0.1f, 0.8f, 1.f}
 #define SETTINGS_SSD_COLOR_INACTIVE {0.1f, 0.1f, 0.1f, 0.7f}
 
 /*

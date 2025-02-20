@@ -47,7 +47,6 @@ void Pointer::pointerMoveEvent(const LPointerMoveEvent &event)
     if (!G::scene().pointerFocus().empty() && G::scene().pointerFocus().front()->userData() == G::SSDEdge)
         return;
 
-
     if (m_focus_on_hover) {
         Surface* surfaceUnderCursor = (Surface*)surfaceAt(cursor()->pos());
         if (surfaceUnderCursor) {
@@ -55,7 +54,7 @@ void Pointer::pointerMoveEvent(const LPointerMoveEvent &event)
                 setFocus(surfaceUnderCursor);
                 seat()->pointer()->setFocus(surfaceUnderCursor);
                 seat()->keyboard()->setFocus(surfaceUnderCursor);
-                surfaceUnderCursor->raise();
+                // surfaceUnderCursor->raise();
                 auto tl = surfaceUnderCursor->tl();
                 if (tl && !tl->activated()) {
                     tl->configureState(tl->pendingConfiguration().state | LToplevelRole::Activated);
