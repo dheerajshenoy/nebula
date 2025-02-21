@@ -87,8 +87,34 @@ void Keyboard::keyEvent(const LKeyboardKeyEvent &event)
         return;
     }
 
-    /* The AuxFunc flag adds the Ctrl + Shift + ESC shortcut to quit, ensure
-     * to add a way to exit if you remove it */
+    if (LEFT_META && event.keyCode() == KEY_COMMA && event.state() == LKeyboardKeyEvent::Pressed) {
+        ((Compositor*) compositor())->focusPrevMonitor();
+        return;
+    }
+
+
+    if (LEFT_META && event.keyCode() == KEY_DOT && event.state() == LKeyboardKeyEvent::Pressed) {
+        ((Compositor*) compositor())->focusNextMonitor();
+        return;
+    }
+
+    if (LEFT_META && event.keyCode() == KEY_F && event.state() == LKeyboardKeyEvent::Pressed) {
+        if (Surface* focusedSurface = (Surface*) focus()) {
+            focusedSurface->toggleFullscreen();
+        }
+        return;
+    }
+
+    if (LEFT_META && event.keyCode() == KEY_L && event.state() == LKeyboardKeyEvent::Pressed) {
+        output->layoutManager()->increaseMasterWidth(0.05);
+        return;
+    }
+
+    if (LEFT_META && event.keyCode() == KEY_H && event.state() == LKeyboardKeyEvent::Pressed) {
+        output->layoutManager()->decreaseMasterWidth(0.05);
+        return;
+    }
+
     G::scene().handleKeyboardKeyEvent(event, LScene::WaylandEvents | LScene::PointerConstraints);
 
 }

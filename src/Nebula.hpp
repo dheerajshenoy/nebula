@@ -4,8 +4,6 @@
 #include <LLog.h>
 #include <unistd.h>
 
-#include "Compositor.h"
-
 class Nebula {
 
 public:
@@ -14,9 +12,11 @@ public:
 
 void init_env() noexcept;
 int event_loop() noexcept;
+void focusNextMonitor() noexcept;
+void focusPrevMonitor() noexcept;
 
+int monitorIndex() const noexcept { return m_monitorIndex; }
 
 private:
-
-
+    int m_monitorIndex;
 };

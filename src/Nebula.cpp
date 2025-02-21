@@ -1,10 +1,13 @@
 #include "Nebula.hpp"
+#include "Compositor.h"
 
 Nebula::Nebula() {
     init_env();
+    LLauncher::startDaemon();
 }
 
-Nebula::~Nebula() {}
+Nebula::~Nebula() {
+}
 
 void Nebula::init_env() noexcept {
     /* Enable Louvre fatal logs */
@@ -45,23 +48,12 @@ void Nebula::init_env() noexcept {
 }
 
 int Nebula::event_loop() noexcept {
-
-    /* Starts an auxiliary daemon allowing shell commands to be run via LLauncher::launch().
-     * Note: If you decide not to use this daemon be careful when forking after LCompositor is started, as libseat and other
-     * subsystems might leak resources and interfere with the session if not handled properly. */
-    LLauncher::startDaemon();
-
     Compositor compositor;
 
-    /* You can load a custom input and graphics backend here. For more details, see the LCompositor documentation.
-     * By default, if the WAYLAND_DISPLAY environment variable is set, the Wayland backends will be loaded,
-     * otherwise, if launched from a free TTY, the DRM and Libinput backends will be used.*/
-
-    if (!compositor.start())
-        {
-            LLog::fatal("Failed to start compositor.");
-            return EXIT_FAILURE;
-        }
+    if (!compositor.start()) {
+        LLog::fatal("Failed to start compositor.");
+        return EXIT_FAILURE;
+    }
 
     /* Main thread loop, use LCompositor::fd() to get a pollable fd if needed. */
     while (compositor.state() != LCompositor::Uninitialized)

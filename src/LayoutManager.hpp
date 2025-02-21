@@ -17,7 +17,6 @@ LayoutManager(Output *output);
 void addSurface(Surface *surface) noexcept;
 void removeSurface(Surface *surface) noexcept;
 void updateLayout() noexcept;
-
 void focusNextWindow() noexcept;
 void focusPrevWindow() noexcept;
 void focusWindow(Surface *surface) noexcept;
@@ -26,11 +25,15 @@ inline int focusIndex() const noexcept { return m_focus_index; }
 
 void setAvailableGeometry(const LRect &rect) noexcept;
 
+void increaseMasterWidth(const float &dw = 1) noexcept;
+void decreaseMasterWidth(const float &dw = 1) noexcept;
+
 private:
     std::vector<Surface *> m_surfaces;
     int m_focus_index = 0;
     int m_gap = 0;
     LRect m_availGeo;
+    float m_masterRatio = 0.6f;
 };
 
 #endif // LAYOUTMANAGER_HPP

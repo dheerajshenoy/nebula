@@ -69,7 +69,7 @@ void Surface::mappingChanged()
 {
     compositor()->repaintAllOutputs();
 
-    Output *activeOutput { (Output*)cursor()->output() };
+    Output *activeOutput { (Output*) cursor()->output() };
     if (!activeOutput)
         return;
 
@@ -83,6 +83,7 @@ void Surface::mappingChanged()
             layoutManager->removeSurface(this);
         }
     }
+
 }
 
 void Surface::minimizedChanged()
@@ -124,4 +125,22 @@ void Surface::setFloating(const bool &state) noexcept {
 
 void Surface::toggleFloating() noexcept {
     setFloating(!this->isFloating());
+}
+
+void Surface::setFullscreen(const bool &state) noexcept {
+    m_fullscreen = state;
+    Output *activeOutput { (Output*) cursor()->output() };
+
+    auto tl = this->tl();
+    if (state) {
+        tl->setFullscreenRequest(activeOutput);
+    } else {
+        tl->unsetFullscreenRequest();
+        activeOutput->layoutManager()->updateLayout();
+    }
+
+}
+
+void Surface::toggleFullscreen() noexcept {
+    setFullscreen(!this->isFullscreen());
 }

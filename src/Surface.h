@@ -58,8 +58,13 @@ void setFloating(const bool &state) noexcept;
 inline bool isFloating() noexcept { return m_floating; }
 void toggleFloating() noexcept;
 
+void setFullscreen(const bool &state) noexcept;
+inline bool isFullscreen() noexcept { return m_fullscreen; }
+void toggleFullscreen() noexcept;
+
 private:
     bool m_floating = false;
+    bool m_fullscreen = false;
 };
 
 #endif // SURFACE_H

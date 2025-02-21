@@ -6,5 +6,7 @@
 - [X] Mouse hover focus index change
 - [X] Gaps (kind of)
 - [X] panel window positioning exclusivity
+- [X] increase/decrease master width
+- [ ] Fix fullscreen revert
 - [ ] Workspaces
 - [ ] Waybar workspaces support

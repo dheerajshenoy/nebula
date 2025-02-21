@@ -7,7 +7,7 @@ LayoutManager::LayoutManager(Output *output) {
 }
 
 void LayoutManager::addSurface(Surface *surface) noexcept {
-    if (!surface || std::find(m_surfaces.begin(), m_surfaces.end(), surface) != m_surfaces.end())
+    if (!surface)
         return;
 
     if (m_surfaces.empty()) {
@@ -25,6 +25,9 @@ void LayoutManager::addSurface(Surface *surface) noexcept {
 }
 
 void LayoutManager::removeSurface(Surface *surface) noexcept {
+    if (!surface)
+        return;
+
     auto it = std::find(m_surfaces.begin(), m_surfaces.end(), surface);
     if (it != m_surfaces.end()) {
         bool wasFocused = (*it == m_surfaces[m_focus_index]);
@@ -85,9 +88,7 @@ void LayoutManager::updateLayout() noexcept {
         return;
     }
 
-    // Master-Stack layout
-    const float masterRatio = 0.6f;
-    int masterWidth = static_cast<int>(containerSize.width() * masterRatio) - m_gap;
+    int masterWidth = static_cast<int>(containerSize.width() * m_masterRatio) - m_gap;
     int stackWidth = containerSize.width() - masterWidth - m_gap;
     int stackHeight = (containerSize.height() - (count - 1) * m_gap) / (count - 1);
 
@@ -119,6 +120,7 @@ void LayoutManager::updateLayout() noexcept {
                     containerPos.x() + masterWidth + m_gap,
                     containerPos.y() + (i - 1) * (stackHeight + m_gap) + m_gap
                 });
+
                 tl->configureSize({
                     stackWidth - extra.width(),
                     stackHeight - extra.height() - m_gap
@@ -188,7 +190,6 @@ void LayoutManager::focusWindow(Surface *surface) noexcept {
     }
 }
 
-
 void LayoutManager::setFocusIndex(const int &index) noexcept {
     m_focus_index = index;
 
@@ -209,5 +210,21 @@ void LayoutManager::setFocusIndex(const int &index) noexcept {
 
 void LayoutManager::setAvailableGeometry(const LRect &rect) noexcept {
     m_availGeo = rect;
+    updateLayout();
+}
+
+void LayoutManager::increaseMasterWidth(const float &dw) noexcept {
+    if (m_masterRatio + dw < 1.0f) {
+        m_masterRatio += dw;
+    }
+
+    updateLayout();
+}
+
+void LayoutManager::decreaseMasterWidth(const float &dw) noexcept {
+    if (m_masterRatio - dw > 0.0f) {
+        m_masterRatio -= dw;
+    }
+
     updateLayout();
 }

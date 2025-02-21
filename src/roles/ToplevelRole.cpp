@@ -7,24 +7,24 @@
 ToplevelRole::ToplevelRole(const void *params) noexcept : LToplevelRole(params)
 {
     moveSession().setOnBeforeUpdateCallback([](LToplevelMoveSession *session)
-    {
-        LMargins constraints { session->toplevel()->calculateConstraintsFromOutput(cursor()->output()) };
-
-        if (constraints.bottom != LEdgeDisabled)
         {
-            constraints.bottom += session->toplevel()->windowGeometry().size().h()
-                + session->toplevel()->extraGeometry().top
-                + session->toplevel()->extraGeometry().bottom
-                - 50; // Prevents it from end up unreachable behind a bottom panel
-        }
-        session->setConstraints(constraints);
-    });
+            LMargins constraints { session->toplevel()->calculateConstraintsFromOutput(cursor()->output()) };
+
+            if (constraints.bottom != LEdgeDisabled)
+                {
+                    constraints.bottom += session->toplevel()->windowGeometry().size().h()
+                        + session->toplevel()->extraGeometry().top
+                        + session->toplevel()->extraGeometry().bottom
+                        - 50; // Prevents it from end up unreachable behind a bottom panel
+                }
+            session->setConstraints(constraints);
+        });
 
     resizeSession().setOnBeforeUpdateCallback([](LToplevelResizeSession *session)
-    {
-        LMargins constraints { session->toplevel()->calculateConstraintsFromOutput(cursor()->output()) };
-        session->setConstraints(constraints);
-    });
+        {
+            LMargins constraints { session->toplevel()->calculateConstraintsFromOutput(cursor()->output()) };
+            session->setConstraints(constraints);
+        });
 }
 
 const LPoint &ToplevelRole::rolePos() const
@@ -38,18 +38,18 @@ void ToplevelRole::configureRequest()
     LOutput *output { cursor()->output() };
 
     if (supportServerSideDecorations())
-    {
-        setExtraGeometry(SETTINGS_SSD_EXTRA_GEOMETRY);
-        configureDecorationMode(ServerSide);
-    }
+        {
+            setExtraGeometry(SETTINGS_SSD_EXTRA_GEOMETRY);
+            configureDecorationMode(ServerSide);
+        }
 
     if (output)
-    {
-        surface()->sendOutputEnterEvent(output);
-        configureBounds(
-            output->availableGeometry().size()
-            - LSize(extraGeometry().left + extraGeometry().right, extraGeometry().top + extraGeometry().bottom));
-    }
+        {
+            surface()->sendOutputEnterEvent(output);
+            configureBounds(
+                            output->availableGeometry().size()
+                                - LSize(extraGeometry().left + extraGeometry().right, extraGeometry().top + extraGeometry().bottom));
+        }
     else
         configureBounds(0, 0);
 
@@ -82,29 +82,49 @@ void ToplevelRole::unsetMaximizedRequest()
     LToplevelRole::unsetMaximizedRequest();
 }
 
-void ToplevelRole::setFullscreenRequest(LOutput *output)
+void ToplevelRole::setFullscreenRequest(LOutput *preferredOutput)
 {
     /* Refer to the default implementation in the documentation. */
-    LToplevelRole::setFullscreenRequest(output);
+    LOutput *output { preferredOutput != nullptr ? preferredOutput : cursor()->output()};
+
+    if (!output || fullscreen())
+        return;
+
+    if (!maximized())
+        prevRect = LRect(surface()->pos(), windowGeometry().size());
+
+    if (prevRect.area() == 0) {
+        auto extraGeom = extraGeometry();
+        prevRect.setSize(output->availableGeometry().size() - LSize(extraGeom.left + extraGeom.right,
+                                                                    extraGeom.top + extraGeom.bottom));
+        prevRect.setPos(output->pos() + output->availableGeometry().pos());
+    }
+
+    setExclusiveOutput(output);
+    configureSize(output->size());
+    configureState(Activated | Fullscreen);
 }
 
 void ToplevelRole::unsetFullscreenRequest()
 {
-    /* Refer to the default implementation in the documentation. */
-    LToplevelRole::unsetFullscreenRequest();
+    if (!fullscreen())
+        return;
+
+    configureState(pendingConfiguration().state &~ Fullscreen);
+    configureSize(prevRect.size());
 }
 
 void ToplevelRole::setMinimizedRequest()
 {
-    surface()->setMinimized(true);
+    // surface()->setMinimized(true);
 }
 
 void ToplevelRole::showWindowMenuRequest(const LEvent &triggeringEvent, Int32 x, Int32 y)
-{
-    L_UNUSED(triggeringEvent)
-    L_UNUSED(x)
-    L_UNUSED(y)
-}
+    {
+        L_UNUSED(triggeringEvent)
+            L_UNUSED(x)
+        L_UNUSED(y)
+    }
 
 void ToplevelRole::atomsChanged(LBitset<AtomChanges> changes, const Atoms &prev)
 {
@@ -114,12 +134,12 @@ void ToplevelRole::atomsChanged(LBitset<AtomChanges> changes, const Atoms &prev)
     bool updateSSD { false };
 
     if (changes.check(DecorationModeChanged))
-    {
-        if (decorationMode() == ServerSide)
-            ssd = std::make_unique<SSD>(this);
-        else
-            ssd.reset();
-    }
+        {
+            if (decorationMode() == ServerSide)
+                ssd = std::make_unique<SSD>(this);
+            else
+                ssd.reset();
+        }
 
     if (changes.check(WindowGeometryChanged) && ssd)
         updateSSD = true;
@@ -133,66 +153,66 @@ void ToplevelRole::atomsChanged(LBitset<AtomChanges> changes, const Atoms &prev)
         updateSSD = true;
 
     if (stateChanges.check(Maximized))
-    {
-        if (maximized())
         {
-            if (exclusiveOutput())
-            {
-                surface()->raise();
-                surface()->setPos(exclusiveOutput()->pos() + exclusiveOutput()->availableGeometry().pos());
-                surface()->setMinimized(false);
-            }
-            else
-            {
-                configureSize(0, 0);
-                configureState(pendingConfiguration().state & ~Maximized);
-            }
+            if (maximized())
+                {
+                    if (exclusiveOutput())
+                        {
+                            surface()->raise();
+                            surface()->setPos(exclusiveOutput()->pos() + exclusiveOutput()->availableGeometry().pos());
+                            surface()->setMinimized(false);
+                        }
+                    else
+                        {
+                            configureSize(0, 0);
+                            configureState(pendingConfiguration().state & ~Maximized);
+                        }
+                }
+            else if (!resizing())
+                {
+                    surface()->setPos(prevRect.pos());
+                }
         }
-        else if (!resizing())
-        {
-            surface()->setPos(prevRect.pos());
-        }
-    }
 
     if (stateChanges.check(Fullscreen))
-    {
-        if (fullscreen())
         {
-            if (exclusiveOutput())
-            {
-                surface()->setPos(exclusiveOutput()->pos());
-                surface()->raise();
-#ifdef SETTINGS_SSD
-                if (ssd)
+            if (fullscreen())
                 {
-                    setExtraGeometry({0,0,0,0});
-                    updateSSD = true;
-                }
-#endif
-            }
-            else
-            {
-                configureSize(0, 0);
-                configureState(pendingConfiguration().state & ~Fullscreen);
-            }
-        }
-        else
-        {
+                    if (exclusiveOutput())
+                        {
+                            surface()->setPos(exclusiveOutput()->pos());
+                            surface()->raise();
 #ifdef SETTINGS_SSD
-            if (ssd)
-            {
-                setExtraGeometry(SETTINGS_SSD_EXTRA_GEOMETRY);
-                updateSSD = true;
-            }
+                            if (ssd)
+                                {
+                                    setExtraGeometry({0,0,0,0});
+                                    updateSSD = true;
+                                }
 #endif
-            surface()->setPos(prevRect.pos());
+                            }
+                    else
+                        {
+                            configureSize(0, 0);
+                            configureState(pendingConfiguration().state & ~Fullscreen);
+                        }
+                }
+            else
+                {
+#ifdef SETTINGS_SSD
+                    if (ssd)
+                        {
+                            setExtraGeometry(SETTINGS_SSD_EXTRA_GEOMETRY);
+                            updateSSD = true;
+                        }
+#endif
+                    surface()->setPos(prevRect.pos());
+                }
         }
-    }
 
     if (stateChanges.check(Fullscreen | Maximized) && !pendingConfiguration().state.check(Fullscreen | Maximized))
         setExclusiveOutput(nullptr);
 
-skip:
+ skip:
     if (ssd && updateSSD)
         ssd->updateGeometry();
 }

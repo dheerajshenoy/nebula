@@ -57,6 +57,8 @@ void Compositor::initialized()
 
     /* Sets a background wallpaper using swaybg */;
     LLauncher::launch(std::string("swaybg -m fill -i ") + (compositor()->defaultAssetsPath() / "wallpaper.png").string());
+
+    m_monitor_index = 0;
 }
 
 void Compositor::uninitialized()
@@ -153,4 +155,37 @@ bool Compositor::globalsFilter(LClient *client, LGlobal *global)
 #endif
 
     return true;
+}
+
+
+void Compositor::focusNextMonitor() noexcept {
+    auto _outputs = this->outputs();
+    if (m_monitor_index == _outputs.size() - 1)
+        return;
+
+    m_monitor_index++;
+    Output* output = (Output*) _outputs.at(m_monitor_index);
+
+    const auto &pos = output->pos();
+    const auto &size = output->size();
+
+    cursor()->setPos(pos.x() + size.width() / 2, pos.y() + size.height() / 2);
+}
+
+void Compositor::focusPrevMonitor() noexcept {
+    auto _outputs = this->outputs();
+    if (m_monitor_index == 0)
+        return;
+
+    m_monitor_index--;
+    Output* output = (Output*) _outputs.at(m_monitor_index);
+
+    const auto &pos = output->pos();
+    const auto &size = output->size();
+
+    auto _cursor = cursor();
+
+    _cursor->setPos(pos.x() + size.width() / 2, pos.y() + size.height() / 2);
+    _cursor->useDefault();
+    _cursor->setVisible(true);
 }

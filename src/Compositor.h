@@ -7,6 +7,7 @@
 #include "scene/Scene.h"
 #include "utils/Assets.h"
 #include "utils/Systemd.h"
+#include "Surface.h"
 
 #include <memory>
 
@@ -18,6 +19,10 @@ class Compositor final : public LCompositor {
 public:
     /* A single scene to drive all outputs and input events */
     Scene scene;
+    void focusNextMonitor() noexcept;
+    void focusPrevMonitor() noexcept;
+    inline int monitorIndex() const noexcept { return m_monitor_index; }
+
 
 /* Cursors, textures, etc */
 std::unique_ptr<Assets> assets;
@@ -41,4 +46,6 @@ bool createGlobalsRequest() override;
 /* Controls which client can bind to which global */
 bool globalsFilter(LClient *client, LGlobal *global) override;
 
+private:
+    int m_monitor_index;
 };
