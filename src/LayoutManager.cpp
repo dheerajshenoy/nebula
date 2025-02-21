@@ -209,4 +209,5 @@ void LayoutManager::setFocusIndex(const int &index) noexcept {
 
 void LayoutManager::setAvailableGeometry(const LRect &rect) noexcept {
     m_availGeo = rect;
+    updateLayout();
 }

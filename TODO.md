@@ -5,5 +5,6 @@
 - [X] Master stack layout
 - [X] Mouse hover focus index change
 - [X] Gaps (kind of)
+- [X] panel window positioning exclusivity
 - [ ] Workspaces
 - [ ] Waybar workspaces support
