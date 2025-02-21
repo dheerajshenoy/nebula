@@ -54,7 +54,7 @@ void mappingChanged() override;
 void minimizedChanged() override;
 ToplevelRole *closestToplevelParent() const noexcept;
 
-inline void setFloating(const bool &state) noexcept { m_floating = state; }
+void setFloating(const bool &state) noexcept;
 inline bool isFloating() noexcept { return m_floating; }
 
 private:

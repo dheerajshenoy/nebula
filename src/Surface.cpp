@@ -109,3 +109,12 @@ void Surface::minimizedChanged()
             raise();
         }
 }
+
+void Surface::setFloating(const bool &state) noexcept {
+    m_floating = state;
+    Output *activeOutput { (Output*)cursor()->output() };
+    auto lm = activeOutput->layoutManager();
+
+    lm->updateLayout();
+
+}
