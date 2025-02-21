@@ -67,15 +67,23 @@ void Keyboard::keyEvent(const LKeyboardKeyEvent &event)
         return;
     }
 
-    // focus window
-
+    // focus next window
     if (LEFT_META && event.keyCode() == KEY_J && event.state() == LKeyboardKeyEvent::Pressed) {
         output->layoutManager()->focusNextWindow();
         return;
     }
 
+    // focus previous window
     if (LEFT_META && event.keyCode() == KEY_K && event.state() == LKeyboardKeyEvent::Pressed) {
         output->layoutManager()->focusPrevWindow();
+        return;
+    }
+
+    // togglefloating
+    if (LEFT_META && event.keyCode() == KEY_T && event.state() == LKeyboardKeyEvent::Pressed) {
+        if (Surface* focusedSurface = (Surface*) focus()) {
+            focusedSurface->toggleFloating();
+        }
         return;
     }
 

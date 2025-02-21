@@ -116,5 +116,9 @@ void Surface::setFloating(const bool &state) noexcept {
     auto lm = activeOutput->layoutManager();
 
     lm->updateLayout();
+}
 
+
+void Surface::toggleFloating() noexcept {
+    setFloating(!this->isFloating());
 }

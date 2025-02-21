@@ -56,6 +56,7 @@ ToplevelRole *closestToplevelParent() const noexcept;
 
 void setFloating(const bool &state) noexcept;
 inline bool isFloating() noexcept { return m_floating; }
+void toggleFloating() noexcept;
 
 private:
     bool m_floating = false;
