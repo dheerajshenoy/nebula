@@ -1,13 +1,15 @@
+#include "Output.h"
+#include "LayoutManager.hpp"
+
 #include <LScreenshotRequest.h>
 #include <LSessionLockRole.h>
 #include <LAnimation.h>
 #include "Compositor.h"
-#include "Output.h"
 #include "Surface.h"
 #include "utils/Global.h"
 
-Output::Output(const void* params) :LOutput(params)
-{
+Output::Output(const void *params) : LOutput(params) {
+    m_layoutManager = new LayoutManager(this->availableGeometry().size());
     m_current_workspace = 0;
 }
 

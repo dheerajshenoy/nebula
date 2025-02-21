@@ -1,7 +1,9 @@
 - [X] Window move & resize on mod + click
 - [X] Focus window on hover
 - [X] Window Border
+- [X] Focus window
+- [X] Master stack layout
+- [X] Mouse hover focus index change
+- [X] Gaps (kind of)
 - [ ] Workspaces
-- [ ] Focus window
-- [ ] Layouts
 - [ ] Waybar workspaces support

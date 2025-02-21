@@ -33,27 +33,32 @@ class ToplevelRole;
  * Surfaces with the toplevel role and using server-side decorations provide a custom container
  * for the "view", thats why we added the getView() method. See the ToplevelRole class.
  */
-class Surface final : public LSurface
-{
+class Surface final : public LSurface {
 public:
     using LSurface::LSurface;
 
-    SurfaceView view { this };
+SurfaceView view { this };
 
-    ToplevelRole *tl() noexcept
-    {
-        return (ToplevelRole*)toplevel();
-    }
+ToplevelRole *tl() noexcept
+{
+    return (ToplevelRole*)toplevel();
+}
 
-    LView *getView() noexcept;
-    bool hasMappedChildSurface() const noexcept;
+LView *getView() noexcept;
+bool hasMappedChildSurface() const noexcept;
 
-    void roleChanged() override;
-    void layerChanged() override;
-    void orderChanged() override;
-    void mappingChanged() override;
-    void minimizedChanged() override;
-    ToplevelRole *closestToplevelParent() const noexcept;
+void roleChanged() override;
+void layerChanged() override;
+void orderChanged() override;
+void mappingChanged() override;
+void minimizedChanged() override;
+ToplevelRole *closestToplevelParent() const noexcept;
+
+inline void setFloating(const bool &state) noexcept { m_floating = state; }
+inline bool isFloating() noexcept { return m_floating; }
+
+private:
+    bool m_floating = false;
 };
 
 #endif // SURFACE_H

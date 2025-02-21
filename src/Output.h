@@ -1,3 +1,4 @@
+#pragma once
 #ifndef OUTPUT_H
 #define OUTPUT_H
 
@@ -5,6 +6,7 @@
 #include <LSolidColorView.h>
 #include <vector>
 
+class LayoutManager;
 class Workspace;
 class Surface;
 
@@ -77,7 +79,10 @@ bool tryDirectScanout(Surface *surface) noexcept;
 
 void setCurrentWorkspace(const int &n) noexcept;
 
+inline LayoutManager* layoutManager() noexcept { return m_layoutManager; }
+
 private:
+    LayoutManager *m_layoutManager;
     int m_current_workspace;
     // Layout m_layout; // TODO: Holds the layout of the output
 };

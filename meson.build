@@ -21,6 +21,7 @@ icuuc_dep = dependency('icu-uc')
 
 # List C/C++ source files stored in ./src
 sources = files(
+    'src/LayoutManager.cpp',
     'src/Client.cpp',
     'src/Compositor.cpp',
     'src/main.cpp',

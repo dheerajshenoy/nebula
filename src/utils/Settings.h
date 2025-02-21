@@ -29,7 +29,7 @@
  */
 
 /* Ennable SSD for clients that support it */
-#define SETTINGS_SSD 0
+#define SETTINGS_SSD
 
 /* SSD titlebar/edges size */
 #define SETTINGS_SSD_EXTRA_GEOMETRY { .left = 3, .top = 3, .right = 3, .bottom = 3 }

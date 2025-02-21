@@ -2,6 +2,7 @@
 #include "utils/Global.h"
 #include "scene/LayerView.h"
 #include "roles/ToplevelRole.h"
+#include "LayoutManager.hpp"
 
 LView *Surface::getView() noexcept
 {
@@ -63,25 +64,6 @@ void Surface::orderChanged()
     getView()->insertAfter((prev && prev->layer() == layer()) ? prev->getView() : nullptr);
 }
 
-/*
-  void Surface::mappingChanged()
-  {
-  /* Refer to the default implementation in the documentation.
-  // LSurface::mappingChanged();
-  compositor()->repaintAllOutputs();
-
-    Output* activeOutput { (Output*) cursor()->output() };
-
-    if (!activeOutput)
-    return;
-
-    if (mapped() && toplevel()) {
-    setPos(10, 10);
-    }
-
-}
- */
-
 void Surface::mappingChanged()
 {
     compositor()->repaintAllOutputs();
@@ -90,60 +72,17 @@ void Surface::mappingChanged()
     if (!activeOutput)
         return;
 
-    if (mapped() && toplevel())
-    {
-        static std::vector<Surface *> tiledWindows;
+    LayoutManager* layoutManager = activeOutput->layoutManager();
 
-        // Add the window if it's not already in the list
-        if (std::find(tiledWindows.begin(), tiledWindows.end(), this) == tiledWindows.end())
-        {
-            tiledWindows.push_back(this);
+    if (toplevel()) {
+        if (mapped()) {
+            layoutManager->addSurface(this);
         }
-
-        // Get available screen space
-        const LSize availSize = activeOutput->availableGeometry().size();
-        const LSize availPos = activeOutput->pos() + activeOutput->availableGeometry().pos();
-
-        int numWindows = tiledWindows.size();
-        if (numWindows == 0) return;
-
-        if (numWindows == 1) {
-            Surface *win = tiledWindows[0];
-            auto tl = win->tl();
-            tl->configureSize(availSize.width(), availSize.height());
-            win->setPos(availPos.x(), availPos.y());
-            return;
-        }
-
-        int masterWidth = availSize.width() * 0.6; // Master gets 60% width
-        int stackWidth = availSize.width() - masterWidth;
-
-
-        // Set master window position (first window gets master area)
-        if (numWindows >= 1)
-        {
-            Surface *master = tiledWindows[0];
-            auto tl = master->tl();
-            tl->configureSize(masterWidth, availSize.height());
-            master->setPos(availPos.x(), availPos.y());
-        }
-
-        // Stack remaining windows vertically
-        if (numWindows > 1)
-        {
-            int stackHeight = availSize.height() / (numWindows - 1);
-            for (int i = 1; i < numWindows; i++)
-            {
-                Surface *win = tiledWindows[i];
-                int y = availPos.y() + (i - 1) * stackHeight;
-                auto tl = win->tl();
-                tl->configureSize(stackWidth, stackHeight);
-                win->setPos({availPos.x() + masterWidth, y});
-            }
+        else {
+            layoutManager->removeSurface(this);
         }
     }
 }
-
 
 void Surface::minimizedChanged()
 {

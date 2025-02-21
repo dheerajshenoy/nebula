@@ -7,6 +7,7 @@
 #include "../utils/Settings.h"
 #include "../scene/Scene.h"
 #include "../utils/Assets.h"
+#include "../LayoutManager.hpp"
 
 Pointer::Pointer(const void *params) noexcept : LPointer(params)
 {
@@ -51,18 +52,20 @@ void Pointer::pointerMoveEvent(const LPointerMoveEvent &event)
         Surface* surfaceUnderCursor = (Surface*)surfaceAt(cursor()->pos());
         if (surfaceUnderCursor) {
             if (surfaceUnderCursor->layer() != Louvre::LLayerBackground) {
-                setFocus(surfaceUnderCursor);
-                seat()->pointer()->setFocus(surfaceUnderCursor);
-                seat()->keyboard()->setFocus(surfaceUnderCursor);
-                // surfaceUnderCursor->raise();
-                auto tl = surfaceUnderCursor->tl();
-                if (tl && !tl->activated()) {
-                    tl->configureState(tl->pendingConfiguration().state | LToplevelRole::Activated);
-                }
-                // m_cursorOwner = surfaceUnderCursor->views();
+                ((Output*)(cursor()->output()))->layoutManager()->focusWindow(surfaceUnderCursor);
             }
         }
     }
+
+                // setFocus(surfaceUnderCursor);
+                // seat()->pointer()->setFocus(surfaceUnderCursor);
+                // seat()->keyboard()->setFocus(surfaceUnderCursor);
+                // // surfaceUnderCursor->raise();
+                // auto tl = surfaceUnderCursor->tl();
+                // if (tl && !tl->activated()) {
+                //     tl->configureState(tl->pendingConfiguration().state | LToplevelRole::Activated);
+                // }
+                // m_cursorOwner = surfaceUnderCursor->views();
 
 
     if (focus() && focus()->layer() != Louvre::LLayerBackground) {
@@ -226,8 +229,12 @@ bool Pointer::maybeMoveOrResize(const LPointerButtonEvent &event) noexcept
         toplevel->startMoveRequest(event);
 
     toplevel->configureState(toplevel->pendingConfiguration().state | LToplevelRole::Activated);
-    toplevel->surface()->raise();
+
+    auto surface = (Surface*) toplevel->surface();
+    surface->raise();
+    surface->setFloating(true);
     seat()->dismissPopups();
+
 
     return true;
 }

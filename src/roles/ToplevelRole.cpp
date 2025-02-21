@@ -37,13 +37,11 @@ void ToplevelRole::configureRequest()
 {
     LOutput *output { cursor()->output() };
 
-#ifdef SETTINGS_SSD
     if (supportServerSideDecorations())
     {
         setExtraGeometry(SETTINGS_SSD_EXTRA_GEOMETRY);
         configureDecorationMode(ServerSide);
     }
-#endif
 
     if (output)
     {
