@@ -9,7 +9,7 @@
 #include "utils/Global.h"
 
 Output::Output(const void *params) : LOutput(params) {
-    m_layoutManager = new LayoutManager(this->availableGeometry().size());
+    m_layoutManager = new LayoutManager(this);
     m_current_workspace = 0;
 }
 
@@ -130,7 +130,8 @@ void Output::setGammaRequest(LClient *client, const LGammaTable *gamma)
 void Output::availableGeometryChanged()
 {
     /* Refer to the default implementation in the documentation. */
-    LOutput::availableGeometryChanged();
+    const LRect availGeo { pos() + availableGeometry().pos(), availableGeometry().size() };
+    m_layoutManager->setAvailableGeometry(availGeo);
 }
 
 Surface *Output::searchFullscreenSurface() const noexcept

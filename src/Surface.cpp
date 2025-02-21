@@ -3,6 +3,7 @@
 #include "scene/LayerView.h"
 #include "roles/ToplevelRole.h"
 #include "LayoutManager.hpp"
+#include <iostream>
 
 LView *Surface::getView() noexcept
 {
@@ -116,8 +117,10 @@ void Surface::setFloating(const bool &state) noexcept {
     auto lm = activeOutput->layoutManager();
 
     lm->updateLayout();
+    if (state) {
+        raise();
+    }
 }
-
 
 void Surface::toggleFloating() noexcept {
     setFloating(!this->isFloating());

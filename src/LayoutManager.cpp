@@ -1,9 +1,9 @@
 #include "LayoutManager.hpp"
 #include "roles/ToplevelRole.h"
+#include "Output.h"
 
-LayoutManager::LayoutManager(const LSize &size) {
-    m_layerView->setSize(size);
-    m_layerView->enableParentClipping(true);  // Ensure child views are clipped to the layer
+LayoutManager::LayoutManager(Output *output) {
+    m_availGeo.setSize(output->availableGeometry().size());
 }
 
 void LayoutManager::addSurface(Surface *surface) noexcept {
@@ -48,9 +48,10 @@ void LayoutManager::removeSurface(Surface *surface) noexcept {
 void LayoutManager::updateLayout() noexcept {
     if (m_surfaces.empty()) return;
 
-    LSize containerSize = m_layerView->size();
+    LSize containerSize = m_availGeo.size();
+    LPoint containerPos = m_availGeo.topLeft();
 
-    // TODO: Filter floating windows
+    // TODO: Filter floating windows correctly
     std::vector<Surface*> tiledWindows;
     for (auto *s : m_surfaces) {
         if (!s->isFloating()) {
@@ -75,7 +76,7 @@ void LayoutManager::updateLayout() noexcept {
         };
 
         if (surface->mapped() && surface->tl()) {
-            surface->setPos({m_gap, m_gap});
+            surface->setPos({m_gap + containerPos.x(), m_gap + containerPos.y()});
             tl->configureSize({
                 containerSize.width() - extra.width() - 2 * m_gap,
                 containerSize.height() - extra.height() - 2 * m_gap
@@ -107,12 +108,21 @@ void LayoutManager::updateLayout() noexcept {
 
             if (i == 0) {
                 // Master window takes the left portion
-                surface->setPos({m_gap, m_gap});
-                tl->configureSize({masterWidth - extra.width(), containerSize.height() - extra.height() - 2 * m_gap});
+                surface->setPos({m_gap + containerPos.x(), m_gap + containerPos.y()});
+                tl->configureSize({
+                    masterWidth - extra.width(),
+                    containerSize.height() - extra.height() - 2 * m_gap
+                });
             } else {
                 // Stack windows are arranged on the right
-                surface->setPos({masterWidth + m_gap, (i - 1) * (stackHeight + m_gap) + m_gap});
-                tl->configureSize({stackWidth - extra.width(), stackHeight - extra.height() - m_gap});
+                surface->setPos({
+                    containerPos.x() + masterWidth + m_gap,
+                    containerPos.y() + (i - 1) * (stackHeight + m_gap) + m_gap
+                });
+                tl->configureSize({
+                    stackWidth - extra.width(),
+                    stackHeight - extra.height() - m_gap
+                });
             }
         }
     }
@@ -195,4 +205,8 @@ void LayoutManager::setFocusIndex(const int &index) noexcept {
     if (tl && !tl->activated()) {
         tl->configureState(tl->state() | ToplevelRole::Activated);
     }
+}
+
+void LayoutManager::setAvailableGeometry(const LRect &rect) noexcept {
+    m_availGeo = rect;
 }
