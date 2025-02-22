@@ -1,6 +1,7 @@
 #include "LayoutManager.hpp"
 #include "roles/ToplevelRole.h"
 #include "Output.h"
+#include "util.hpp"
 
 LayoutManager::LayoutManager(Output *output) {
     m_availGeo.setSize(output->availableGeometry().size());
@@ -225,6 +226,61 @@ void LayoutManager::decreaseMasterWidth(const float &dw) noexcept {
     if (m_masterRatio - dw > 0.0f) {
         m_masterRatio -= dw;
     }
+
+    updateLayout();
+}
+
+void LayoutManager::swapMaster() noexcept {
+    if (m_surfaces.empty() || m_focus_index == 0)
+        return;
+
+    auto count = m_surfaces.size();
+
+    if (count == 1)
+        return;
+
+    util::fast_swap(m_surfaces, 0, m_focus_index);
+
+    m_focus_index = 0;
+
+    updateLayout();
+}
+
+void LayoutManager::moveWindowUp() noexcept {
+    if (m_surfaces.empty())
+        return;
+
+    auto count = m_surfaces.size();
+
+    if (count == 1)
+        return;
+
+    if (m_focus_index == 0)
+        return;
+
+    util::fast_swap(m_surfaces, m_focus_index, m_focus_index - 1);
+
+    m_focus_index--;
+
+    updateLayout();
+}
+
+void LayoutManager::moveWindowDown() noexcept {
+
+    if (m_surfaces.empty())
+        return;
+
+    auto count = m_surfaces.size();
+
+    if (count == 1)
+        return;
+
+    if (m_focus_index == count - 1)
+        return;
+
+    util::fast_swap(m_surfaces, m_focus_index, m_focus_index + 1);
+
+    m_focus_index++;
 
     updateLayout();
 }

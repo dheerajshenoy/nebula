@@ -41,8 +41,12 @@ void Keyboard::keyEvent(const LKeyboardKeyEvent &event)
     const std::string &terminal = "alacritty";
 
     // Launch terminal
-    if (LEFT_META && LEFT_SHIFT && event.keyCode() == KEY_ENTER && event.state() == LKeyboardKeyEvent::Pressed) {
-        LLauncher::launch(terminal);
+    if (LEFT_META && event.keyCode() == KEY_ENTER && event.state() == LKeyboardKeyEvent::Pressed) {
+        if (LEFT_SHIFT) {
+            LLauncher::launch(terminal);
+        } else {
+            output->layoutManager()->swapMaster();
+        }
     }
 
     // Kill focused window
@@ -64,18 +68,6 @@ void Keyboard::keyEvent(const LKeyboardKeyEvent &event)
 
     if (LEFT_META && LEFT_SHIFT && event.keyCode() == KEY_C && event.state() == LKeyboardKeyEvent::Pressed) {
         compositor()->finish();
-        return;
-    }
-
-    // focus next window
-    if (LEFT_META && event.keyCode() == KEY_J && event.state() == LKeyboardKeyEvent::Pressed) {
-        output->layoutManager()->focusNextWindow();
-        return;
-    }
-
-    // focus previous window
-    if (LEFT_META && event.keyCode() == KEY_K && event.state() == LKeyboardKeyEvent::Pressed) {
-        output->layoutManager()->focusPrevWindow();
         return;
     }
 
@@ -112,6 +104,26 @@ void Keyboard::keyEvent(const LKeyboardKeyEvent &event)
 
     if (LEFT_META && event.keyCode() == KEY_H && event.state() == LKeyboardKeyEvent::Pressed) {
         output->layoutManager()->decreaseMasterWidth(0.05);
+        return;
+    }
+
+    // focus next window
+    if (LEFT_META && event.keyCode() == KEY_J && event.state() == LKeyboardKeyEvent::Pressed) {
+        if (LEFT_SHIFT) {
+            output->layoutManager()->moveWindowDown();
+        } else {
+            output->layoutManager()->focusNextWindow();
+        }
+        return;
+    }
+
+    // focus previous window
+    if (LEFT_META && event.keyCode() == KEY_K && event.state() == LKeyboardKeyEvent::Pressed) {
+        if (LEFT_SHIFT) {
+            output->layoutManager()->moveWindowUp();
+        } else {
+            output->layoutManager()->focusPrevWindow();
+        }
         return;
     }
 

@@ -30,6 +30,7 @@ sources = files(
     'src/Output.cpp',
     'src/SessionLockManager.cpp',
     'src/Surface.cpp',
+    'src/util.hpp',
 
     # Input
     'src/input/Clipboard.cpp',
