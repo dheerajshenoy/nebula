@@ -11,3 +11,4 @@
 - [ ] Fix fullscreen revert
 - [ ] Workspaces
 - [ ] Waybar workspaces support
+- [ ] Animations

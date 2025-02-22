@@ -138,6 +138,7 @@ void LayoutManager::focusPrevWindow() noexcept {
             return;
         }
     }
+
     m_focus_index--;
 
     Surface *surface = m_surfaces[m_focus_index];
