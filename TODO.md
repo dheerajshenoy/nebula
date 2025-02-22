@@ -7,6 +7,7 @@
 - [X] Gaps (kind of)
 - [X] panel window positioning exclusivity
 - [X] increase/decrease master width
+- [X] Monitor switching
 - [ ] Fix fullscreen revert
 - [ ] Workspaces
 - [ ] Waybar workspaces support
