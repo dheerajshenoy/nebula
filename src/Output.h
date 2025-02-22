@@ -84,7 +84,6 @@ inline LayoutManager* layoutManager() noexcept { return m_layoutManager; }
 private:
     LayoutManager *m_layoutManager;
     int m_current_workspace;
-    // Layout m_layout; // TODO: Holds the layout of the output
 };
 
 #endif // OUTPUT_H

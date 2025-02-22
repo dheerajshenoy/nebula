@@ -12,10 +12,10 @@ SurfaceView::SurfaceView(Surface *surface) noexcept :
 bool SurfaceView::nativeMapped() const noexcept
 {
     /* Keep the default implementation (it checks if surface() is nullptr, if the surface is mapped and so on) */
-    return LSurfaceView::nativeMapped() && 
+    return LSurfaceView::nativeMapped() &&
 
-    /* If the session is locked, we only display surfaces from the locking-client */
-    (sessionLockManager()->state() == LSessionLockManager::Unlocked
-        || (sessionLockManager()->state() == LSessionLockManager::Locked 
-            && sessionLockManager()->client() == surface()->client()));
+        /* If the session is locked, we only display surfaces from the locking-client */
+        (sessionLockManager()->state() == LSessionLockManager::Unlocked
+         || (sessionLockManager()->state() == LSessionLockManager::Locked
+             && sessionLockManager()->client() == surface()->client()));
 }

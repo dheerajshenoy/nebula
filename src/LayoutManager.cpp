@@ -3,7 +3,7 @@
 #include "Output.h"
 #include "util.hpp"
 
-LayoutManager::LayoutManager(Output *output) {
+LayoutManager::LayoutManager(Output *output) : m_output(output) {
     m_availGeo.setSize(output->availableGeometry().size());
 }
 
@@ -20,7 +20,6 @@ void LayoutManager::addSurface(Surface *surface) noexcept {
     m_surfaces.push_back(surface);
 
     focusWindow(surface);
-
 
     updateLayout();
 }
@@ -53,7 +52,7 @@ void LayoutManager::updateLayout() noexcept {
     if (m_surfaces.empty()) return;
 
     LSize containerSize = m_availGeo.size();
-    LPoint containerPos = m_availGeo.topLeft();
+    LSize containerPos = m_output->pos();
 
     // TODO: Filter floating windows correctly
     std::vector<Surface*> tiledWindows;
@@ -132,8 +131,13 @@ void LayoutManager::updateLayout() noexcept {
 }
 
 void LayoutManager::focusPrevWindow() noexcept {
-    if (m_focus_index <= 0)
-        return;
+    if (m_focus_index <= 0) {
+        if (m_cycle_window_focus) {
+            m_focus_index = m_surfaces.size();
+        } else {
+            return;
+        }
+    }
     m_focus_index--;
 
     Surface *surface = m_surfaces[m_focus_index];
@@ -152,8 +156,13 @@ void LayoutManager::focusPrevWindow() noexcept {
 }
 
 void LayoutManager::focusNextWindow() noexcept {
-    if (m_focus_index >= m_surfaces.size() - 1)
-        return;
+    if (m_focus_index >= m_surfaces.size() - 1) {
+        if (m_cycle_window_focus) {
+            m_focus_index = -1;
+        } else {
+            return;
+        }
+    }
 
     m_focus_index++;
 
@@ -240,9 +249,7 @@ void LayoutManager::swapMaster() noexcept {
         return;
 
     util::fast_swap(m_surfaces, 0, m_focus_index);
-
     m_focus_index = 0;
-
     updateLayout();
 }
 
@@ -259,9 +266,7 @@ void LayoutManager::moveWindowUp() noexcept {
         return;
 
     util::fast_swap(m_surfaces, m_focus_index, m_focus_index - 1);
-
     m_focus_index--;
-
     updateLayout();
 }
 
@@ -279,8 +284,19 @@ void LayoutManager::moveWindowDown() noexcept {
         return;
 
     util::fast_swap(m_surfaces, m_focus_index, m_focus_index + 1);
-
     m_focus_index++;
-
     updateLayout();
+}
+
+Surface* LayoutManager::focusedWindow() const noexcept {
+    return m_surfaces.at(m_focus_index);
+}
+
+// Focuses previously focused window
+// Used when switching to a monitor
+void LayoutManager::focusOld() noexcept {
+    if (m_surfaces.empty() || m_focus_index < 0 || m_focus_index > m_surfaces.size())
+        return;
+
+    focusWindow(m_surfaces.at(m_focus_index));
 }

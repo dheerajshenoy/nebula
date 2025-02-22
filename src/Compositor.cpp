@@ -27,6 +27,7 @@
 #include "input/Touch.h"
 #include "input/Clipboard.h"
 #include "input/DND.h"
+#include "LayoutManager.hpp"
 
 void Compositor::initialized()
 {
@@ -41,8 +42,7 @@ void Compositor::initialized()
     Int32 totalWidth { 0 };
 
     // Initializes and arranges outputs from left to right
-    for (LOutput *output : seat()->outputs())
-    {
+    for (LOutput *output : seat()->outputs()) {
         // Sets a scale factor of 2 when DPI >= 200
         output->setScale(output->dpi() >= 200 ? 2.f : 1.f);
 
@@ -127,9 +127,9 @@ LFactoryObject *Compositor::createObjectRequest(LFactoryObject::Type objectType,
 void Compositor::onAnticipatedObjectDestruction(LFactoryObject *object)
 {
     if (object->factoryObjectType() == LFactoryObject::Type::LClient)
-    {
-        /* Bye bye client */
-    }
+        {
+            /* Bye bye client */
+        }
 
     /* Do not delete the object! */
 }
@@ -145,18 +145,17 @@ bool Compositor::globalsFilter(LClient *client, LGlobal *global)
 
 #ifdef SETTINGS_XDG_DESKTOP_PORTAL_SCREENCAST_ONLY
     if (global->isType<Protocols::ScreenCopy::GScreenCopyManager>() && systemd && systemd->xdgDesktopPortalWlrPID != 0)
-    {
-        pid_t clientPID;
-        client->credentials(&clientPID);
+        {
+            pid_t clientPID;
+            client->credentials(&clientPID);
 
-        if ((UInt32)clientPID != systemd->xdgDesktopPortalWlrPID)
-            return false;
-    }
+            if ((UInt32)clientPID != systemd->xdgDesktopPortalWlrPID)
+                return false;
+        }
 #endif
 
-    return true;
+return true;
 }
-
 
 void Compositor::focusNextMonitor() noexcept {
     auto _outputs = this->outputs();
@@ -170,6 +169,8 @@ void Compositor::focusNextMonitor() noexcept {
     const auto &size = output->size();
 
     cursor()->setPos(pos.x() + size.width() / 2, pos.y() + size.height() / 2);
+
+    output->layoutManager()->focusOld();
 }
 
 void Compositor::focusPrevMonitor() noexcept {
@@ -183,9 +184,7 @@ void Compositor::focusPrevMonitor() noexcept {
     const auto &pos = output->pos();
     const auto &size = output->size();
 
-    auto _cursor = cursor();
+    cursor()->setPos(pos.x() + size.width() / 2, pos.y() + size.height() / 2);
 
-    _cursor->setPos(pos.x() + size.width() / 2, pos.y() + size.height() / 2);
-    _cursor->useDefault();
-    _cursor->setVisible(true);
+    output->layoutManager()->focusOld();
 }

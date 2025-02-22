@@ -70,6 +70,7 @@ void Surface::mappingChanged()
     compositor()->repaintAllOutputs();
 
     Output *activeOutput { (Output*) cursor()->output() };
+
     if (!activeOutput)
         return;
 

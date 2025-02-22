@@ -231,3 +231,8 @@ void ToplevelRole::preferredDecorationModeChanged()
 {
     /* configureDecorationMode(preferredDecorationMode()); */
 }
+
+void ToplevelRole::decorationModeChanged() noexcept
+{
+
+}

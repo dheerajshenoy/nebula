@@ -44,6 +44,7 @@ public:
     void titleChanged() override;
     void appIdChanged() override;
     void preferredDecorationModeChanged() override;
+    void decorationModeChanged() noexcept;
 };
 
 #endif // TOPLEVELROLE_H
