@@ -127,6 +127,18 @@ void Keyboard::keyEvent(const LKeyboardKeyEvent &event)
         return;
     }
 
+    // Move window to next monitor
+    if (LEFT_META && event.keyCode() == KEY_O && event.state() == LKeyboardKeyEvent::Pressed) {
+        output->layoutManager()->moveWindowNextMonitor();
+        return;
+    }
+
+    // Move window to prev monitor
+    if (LEFT_META && event.keyCode() == KEY_I && event.state() == LKeyboardKeyEvent::Pressed) {
+        output->layoutManager()->moveWindowPrevMonitor();
+        return;
+    }
+
     G::scene().handleKeyboardKeyEvent(event, LScene::WaylandEvents | LScene::PointerConstraints);
 
 }

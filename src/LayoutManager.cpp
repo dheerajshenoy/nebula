@@ -2,6 +2,7 @@
 #include "roles/ToplevelRole.h"
 #include "Output.h"
 #include "util.hpp"
+#include "Compositor.h"
 
 LayoutManager::LayoutManager(Output *output) : m_output(output) {
     m_availGeo.setSize(output->availableGeometry().size());
@@ -167,7 +168,7 @@ void LayoutManager::focusNextWindow() noexcept {
 
     m_focus_index++;
 
-    Surface *surface = m_surfaces[m_focus_index];
+    Surface *surface = m_surfaces.at(m_focus_index);
 
     if (!surface)
         return;
@@ -289,6 +290,7 @@ void LayoutManager::moveWindowDown() noexcept {
     updateLayout();
 }
 
+// Returns the currently focused window
 Surface* LayoutManager::focusedWindow() const noexcept {
     return m_surfaces.at(m_focus_index);
 }
@@ -300,4 +302,47 @@ void LayoutManager::focusOld() noexcept {
         return;
 
     focusWindow(m_surfaces.at(m_focus_index));
+}
+
+
+void LayoutManager::moveWindowNextMonitor() noexcept {
+    auto _compositor = static_cast<Compositor*>(compositor());
+    auto monIndex = _compositor->monitorIndex();
+    auto nOutputs = _compositor->nOutputs();
+
+    if (monIndex + 1 >= nOutputs)
+        return;
+
+    monIndex++;
+    auto window = focusedWindow();
+    auto output = static_cast<Output*>(_compositor->outputs().at(monIndex));
+    moveWindowToMonitor(window, output);
+    _compositor->focusNextMonitor();
+}
+
+void LayoutManager::moveWindowPrevMonitor() noexcept {
+    auto _compositor = static_cast<Compositor*>(compositor());
+    auto monIndex = _compositor->monitorIndex();
+
+    if (monIndex == 0)
+        return;
+
+    monIndex--;
+    auto window = focusedWindow();
+    auto output = static_cast<Output*>(_compositor->outputs().at(monIndex));
+    moveWindowToMonitor(window, output);
+    _compositor->focusPrevMonitor();
+}
+
+void LayoutManager::moveWindowToMonitor(Surface *surface, Output *output) noexcept {
+    if (!surface || !output)
+        return;
+
+    auto newLayoutManager = output->layoutManager();
+
+    this->removeSurface(surface);
+    newLayoutManager->addSurface(surface);
+    newLayoutManager->focusWindow(surface);
+    // Add monitor change signal
+
 }

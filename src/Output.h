@@ -76,9 +76,7 @@ LSolidColorView fadeInView { {0.f, 0.f, 0.f } };
 
 Surface *searchFullscreenSurface() const noexcept;
 bool tryDirectScanout(Surface *surface) noexcept;
-
 void setCurrentWorkspace(const int &n) noexcept;
-
 inline LayoutManager* layoutManager() noexcept { return m_layoutManager; }
 
 private:

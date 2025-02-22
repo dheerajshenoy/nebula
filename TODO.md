@@ -8,6 +8,7 @@
 - [X] panel window positioning exclusivity
 - [X] increase/decrease master width
 - [X] Monitor switching
+- [X] Send window to monitor
 - [ ] Fix fullscreen revert
 - [ ] Workspaces
 - [ ] Waybar workspaces support

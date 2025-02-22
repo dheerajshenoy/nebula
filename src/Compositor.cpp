@@ -158,12 +158,11 @@ return true;
 }
 
 void Compositor::focusNextMonitor() noexcept {
-    auto _outputs = this->outputs();
-    if (m_monitor_index == _outputs.size() - 1)
+    if (m_monitor_index == this->outputs().size() - 1)
         return;
 
     m_monitor_index++;
-    Output* output = (Output*) _outputs.at(m_monitor_index);
+    Output* output = (Output*) this->outputs().at(m_monitor_index);
 
     const auto &pos = output->pos();
     const auto &size = output->size();
@@ -174,12 +173,11 @@ void Compositor::focusNextMonitor() noexcept {
 }
 
 void Compositor::focusPrevMonitor() noexcept {
-    auto _outputs = this->outputs();
     if (m_monitor_index == 0)
         return;
 
     m_monitor_index--;
-    Output* output = (Output*) _outputs.at(m_monitor_index);
+    Output* output = (Output*) this->outputs().at(m_monitor_index);
 
     const auto &pos = output->pos();
     const auto &size = output->size();

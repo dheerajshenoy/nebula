@@ -29,6 +29,9 @@ public:
     void moveWindowUp() noexcept;
     void swapMaster() noexcept;
     Surface* focusedWindow() const noexcept;
+    void moveWindowNextMonitor() noexcept;
+    void moveWindowPrevMonitor() noexcept;
+    void moveWindowToMonitor(Surface *surface, Output *output) noexcept;
 
 private:
     std::vector<Surface *> m_surfaces;
