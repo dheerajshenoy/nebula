@@ -20,6 +20,13 @@ void Pointer::pointerMoveEvent(const LPointerMoveEvent &event)
 {
     G::scene().handlePointerMoveEvent(event, SETTINGS_SCENE_EVENT_OPTIONS);
 
+    if (!seat()->toplevelMoveSessions().empty())
+        cursor()->repaintOutputs(false);
+
+    for (Output *o : (const std::vector<Output*>&)cursor()->intersectedOutputs())
+        if (o->zoom != 1.f)
+            o->repaint();
+
     if (seat()->dnd()->dragging() && seat()->dnd()->triggeringEvent().type() != LEvent::Type::Touch)
         {
             if (seat()->dnd()->action() == LDND::Copy)
@@ -49,10 +56,10 @@ void Pointer::pointerMoveEvent(const LPointerMoveEvent &event)
         return;
 
     if (m_focus_on_hover) {
-        Surface* surfaceUnderCursor = (Surface*)surfaceAt(cursor()->pos());
+        Surface* surfaceUnderCursor = static_cast<Surface*>(surfaceAt(cursor()->pos()));
         if (surfaceUnderCursor) {
             if (surfaceUnderCursor->layer() != Louvre::LLayerBackground) {
-                ((Output*)(cursor()->output()))->layoutManager()->focusWindow(surfaceUnderCursor);
+                static_cast<Output*>(cursor()->output())->layoutManager()->focusWindow(surfaceUnderCursor);
             }
         }
     }
@@ -88,6 +95,17 @@ void Pointer::pointerButtonEvent(const LPointerButtonEvent &event)
 
 void Pointer::pointerScrollEvent(const LPointerScrollEvent &event)
 {
+    Output *output { static_cast<Output*>(cursor()->output()) };
+
+    if (output &&
+        seat()->keyboard()->isKeyCodePressed(KEY_LEFTMETA) &&
+        seat()->keyboard()->isKeyCodePressed(KEY_LEFTCTRL))
+    {
+        output->setZoom(output->zoom + event.axes().y() * 0.005f);
+        return;
+    }
+
+
     G::scene().handlePointerScrollEvent(event, SETTINGS_SCENE_EVENT_OPTIONS);
 }
 
@@ -230,7 +248,7 @@ bool Pointer::maybeMoveOrResize(const LPointerButtonEvent &event) noexcept
 
     toplevel->configureState(toplevel->pendingConfiguration().state | LToplevelRole::Activated);
 
-    auto surface = (Surface*) toplevel->surface();
+    auto surface = static_cast<Surface*>(toplevel->surface());
     surface->raise();
     surface->setFloating(true);
     seat()->dismissPopups();

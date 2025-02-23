@@ -1,6 +1,0 @@
-[submodule "external/wlroots"]
-	path = external/wlroots
-	url = https://gitlab.freedesktop.org/wlroots/wlroots/
-[submodule "external/toml11"]
-	path = external/toml11
-	url = https://github.com/ToruNiina/toml11

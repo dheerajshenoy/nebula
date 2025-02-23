@@ -8,11 +8,20 @@ using namespace Louvre;
 class Workspace : public LLayerView {
 
 public:
-    Workspace(Output *output);
+    Workspace(Output *output, const size_t &index);
     ~Workspace();
-
-inline LayoutManager* layoutManager() noexcept { return m_layoutManager; }
+    LLayerView background { this };
+    LLayerView surfaces { this };
+    LLayerView overlay { this };
+    inline LayoutManager* layoutManager() noexcept { return m_layoutManager; }
+    inline size_t index() const noexcept { return m_index; }
+    void stealChildren() noexcept;
+    void returnChildren() noexcept;
+    void clipChildren() noexcept;
+    void show(const bool &state) noexcept;
 
 private:
-    LayoutManager *m_layoutManager;
+    Output *m_output { nullptr };
+    LayoutManager* m_layoutManager;
+    size_t m_index;
 };

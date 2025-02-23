@@ -67,9 +67,11 @@ void Surface::orderChanged()
 
 void Surface::mappingChanged()
 {
-    compositor()->repaintAllOutputs();
+    // compositor()->repaintAllOutputs();
 
-    Output *activeOutput { (Output*) cursor()->output() };
+    Output *activeOutput { static_cast<Output*>(cursor()->output()) };
+
+    activeOutput->repaint();
 
     if (!activeOutput)
         return;
@@ -115,7 +117,7 @@ void Surface::minimizedChanged()
 
 void Surface::setFloating(const bool &state) noexcept {
     m_floating = state;
-    Output *activeOutput { (Output*)cursor()->output() };
+    Output *activeOutput { static_cast<Output*>(cursor()->output()) };
     auto lm = activeOutput->layoutManager();
 
     lm->updateLayout();
@@ -130,7 +132,7 @@ void Surface::toggleFloating() noexcept {
 
 void Surface::setFullscreen(const bool &state) noexcept {
     m_fullscreen = state;
-    Output *activeOutput { (Output*) cursor()->output() };
+    Output *activeOutput { static_cast<Output*>(cursor()->output()) };
 
     auto tl = this->tl();
     if (state) {

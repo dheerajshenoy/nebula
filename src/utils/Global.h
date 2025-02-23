@@ -25,12 +25,12 @@ enum ViewHint
 
 static Compositor *compositor() noexcept
 {
-    return (Compositor*)Louvre::compositor();
+    return static_cast<Compositor*>(Louvre::compositor());
 }
 
 static Seat *seat() noexcept
 {
-    return (Seat*)Louvre::seat();
+    return static_cast<Seat*>(Louvre::seat());
 }
 
 static Scene &scene() noexcept;

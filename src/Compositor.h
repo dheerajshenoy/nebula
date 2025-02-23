@@ -19,6 +19,7 @@ class Compositor final : public LCompositor {
 public:
     /* A single scene to drive all outputs and input events */
     Scene scene;
+    LLayerView rootView { scene.mainView() };
     void focusNextMonitor(const bool &focusOld = true) noexcept;
     void focusPrevMonitor(const bool &focusOld = true) noexcept;
     inline int monitorIndex() const noexcept { return m_monitor_index; }
@@ -38,6 +39,8 @@ protected:
     bool createGlobalsRequest() override;
     /* Controls which client can bind to which global */
     bool globalsFilter(LClient *client, LGlobal *global) override;
+
+
 
 private:
     int m_monitor_index;

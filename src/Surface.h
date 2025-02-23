@@ -41,7 +41,7 @@ SurfaceView view { this };
 
 ToplevelRole *tl() noexcept
 {
-    return (ToplevelRole*)toplevel();
+    return static_cast<ToplevelRole*>(toplevel());
 }
 
 LView *getView() noexcept;

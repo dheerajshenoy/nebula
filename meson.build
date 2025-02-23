@@ -9,15 +9,18 @@ project(
     ]
 )
 
+cmake = import('cmake')
+
+lua_dep = dependency('lua')
 louvre_dep = dependency('Louvre', version : '>=2.4.0')
 pixman_dep = dependency('pixman-1')
 libinput_dep = dependency('libinput')
 sdbus = dependency(['libsystemd', 'libelogind', 'basu'])
-glesv2_dep = dependency('glesv2')
-wayland_server_dep = dependency('wayland-server')
-fontconfig_dep = dependency('fontconfig')
+#glesv2_dep = dependency('glesv2')
+#wayland_server_dep = dependency('wayland-server')
+#fontconfig_dep = dependency('fontconfig')
 # freetype_dep = dependency('freetype2')
-icuuc_dep = dependency('icu-uc')
+#icuuc_dep = dependency('icu-uc')
 
 # List C/C++ source files stored in ./src
 sources = files(
@@ -31,7 +34,7 @@ sources = files(
     'src/SessionLockManager.cpp',
     'src/Surface.cpp',
     'src/util.hpp',
-  'src/Workspace.cpp',
+    'src/Workspace.cpp',
 
     # Input
     'src/input/Clipboard.cpp',
@@ -68,11 +71,12 @@ executable(
     'nebula',
     sources : [sources],
     dependencies : [
+        lua_dep,
         louvre_dep,
         pixman_dep,
         libinput_dep,
         sdbus,
-        wayland_server_dep,
+        # wayland_server_dep,
         # glesv2_dep,
         # fontconfig_dep,
         # freetype_dep,

@@ -4,6 +4,7 @@
 Nebula::Nebula() {
     init_env();
     LLauncher::startDaemon();
+    init_configuration();
 }
 
 Nebula::~Nebula() {
@@ -60,4 +61,25 @@ int Nebula::event_loop() noexcept {
         compositor.processLoop(-1);
 
     return EXIT_SUCCESS;
+}
+
+void Nebula::init_configuration() noexcept {
+    m_lua.open_libraries(sol::lib::base, sol::lib::package);
+
+    try {
+        m_lua.script_file("/home/neo/Gits/nebula/src/config.lua");
+    } catch (sol::error &e) {
+        LLog::log("%s", e.what());
+        std::exit(1);
+    }
+
+    auto modkey = m_lua["modkey"].get_or<std::string>("mod4");
+
+    auto keybind = m_lua["keybind"].get<sol::table>();
+
+    for (const auto &pair : keybind) {
+        std::string key = pair.first.as<std::string>();
+        sol::table value = pair.second.as<sol::table>();
+        std::cout << key;
+    }
 }

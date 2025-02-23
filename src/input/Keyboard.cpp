@@ -31,7 +31,7 @@ void Keyboard::keyEvent(const LKeyboardKeyEvent &event)
         && event.state() == LKeyboardKeyEvent::Released)
         LLauncher::launch(SETTINGS_SESSION_LOCK_CLIENT);
 
-    Output *output = (Output*) cursor()->output();
+    Output *output = static_cast<Output*>(cursor()->output());
 
     const bool LEFT_META  { isKeyCodePressed(KEY_LEFTMETA)  };
     const bool LEFT_SHIFT { isKeyCodePressed(KEY_LEFTSHIFT) };
@@ -73,25 +73,25 @@ void Keyboard::keyEvent(const LKeyboardKeyEvent &event)
 
     // togglefloating
     if (LEFT_META && event.keyCode() == KEY_T && event.state() == LKeyboardKeyEvent::Pressed) {
-        if (Surface* focusedSurface = (Surface*) focus()) {
+        if (Surface* focusedSurface = static_cast<Surface*>(focus())) {
             focusedSurface->toggleFloating();
         }
         return;
     }
 
     if (LEFT_META && event.keyCode() == KEY_COMMA && event.state() == LKeyboardKeyEvent::Pressed) {
-        ((Compositor*) compositor())->focusPrevMonitor();
+        static_cast<Compositor*>(compositor())->focusPrevMonitor();
         return;
     }
 
 
     if (LEFT_META && event.keyCode() == KEY_DOT && event.state() == LKeyboardKeyEvent::Pressed) {
-        ((Compositor*) compositor())->focusNextMonitor();
+        static_cast<Compositor*>(compositor())->focusNextMonitor();
         return;
     }
 
     if (LEFT_META && event.keyCode() == KEY_F && event.state() == LKeyboardKeyEvent::Pressed) {
-        if (Surface* focusedSurface = (Surface*) focus()) {
+        if (Surface* focusedSurface = static_cast<Surface*>(focus())) {
             focusedSurface->toggleFullscreen();
         }
         return;

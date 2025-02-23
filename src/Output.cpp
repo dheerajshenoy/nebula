@@ -10,7 +10,20 @@
 #include "Workspace.hpp"
 
 Output::Output(const void *params) : LOutput(params),
-    m_current_workspace(0) {}
+    m_current_workspace(0) {
+    zoomScene.enableParentOffset(false);
+    zoomView.enableDstSize(true);
+    zoomView.setTranslucentRegion(&LRegion::EmptyRegion());
+}
+
+Output::~Output() {
+
+    for (const auto &w : m_workspaces) {
+        delete w;
+    }
+    m_workspaces.clear();
+    LOutput::~LOutput();
+}
 
 void Output::initializeGL()
 {
@@ -18,12 +31,10 @@ void Output::initializeGL()
 
     m_workspaces.reserve(9);
 
-    for (int i=0; i < 9; i++) {
-        Workspace *workspace = new Workspace(this);
+    for (size_t i=0; i < 9; i++) {
+        auto workspace = new Workspace(this, i);
         m_workspaces.push_back(workspace);
     }
-
-    /* Fade-in animation example */
 
     LWeak<Output> weakRef { this };
     fadeInView.insertAfter(&G::layers()[LLayerOverlay]);
@@ -104,8 +115,18 @@ void Output::paintGL()
         enableFractionalOversampling(true);
     }
 
+    const bool zoomed { zoom < 1.f && cursor()->output() == this };
+
+    if (zoomed)
+        zoomedDrawBegin();
+    else
+        cursor()->enable(this, true);
+
     /* Let our scene do its magic */
     G::scene().handlePaintGL(this);
+
+    if (zoomed)
+        zoomedDrawEnd();
 
     /* Screen capture requests for this single frame */
     for (LScreenshotRequest *req : screenshotRequests())
@@ -195,4 +216,66 @@ void Output::setCurrentWorkspace(const size_t &n) noexcept {
     if (n >= m_workspaces.size())
         return;
 
+}
+
+void Output::zoomedDrawBegin() noexcept
+{
+    /* Set the zone to capture */
+    G::scene().enableAutoRepaint(false);
+    zoomScene.setParent(G::scene().mainView());
+    zoomScene.setVisible(true);
+    zoomScene.setSizeB(sizeB() * zoom);
+    zoomScene.setScale(scale());
+
+    const LPointF outputRelativeCursorPos { cursor()->pos() - LPointF(pos()) };
+    const LPointF outputNormalizedCursorPos { outputRelativeCursorPos / LSizeF(size()) };
+    LPoint newPos { cursor()->pos() - (LSizeF(zoomScene.nativeSize()) * outputNormalizedCursorPos) };
+
+    /* Prevent capturing stuff outside the output */
+
+    if (newPos.x() < pos().x())
+        newPos.setX(pos().x());
+    else if (newPos.x() + zoomScene.nativeSize().w() > pos().x() + size().w())
+        newPos.setX(pos().x() + size().w() - zoomScene.nativeSize().w());
+
+    if (newPos.y() < pos().y())
+        newPos.setY(pos().y());
+    else if (newPos.y() + zoomScene.nativeSize().h() > pos().y() + size().h())
+        newPos.setY(pos().y() + size().h() - zoomScene.nativeSize().h());
+
+    zoomScene.setPos(newPos);
+
+    /* Render views and the cursor manually into the zoom scene */
+    G::compositor()->rootView.setParent(&zoomScene);
+    zoomScene.render();
+
+    /* Use an LTextureView to show the result scaled to the output size */
+    zoomView.setDstSize(size());
+    zoomView.setPos(pos());
+    zoomView.setTexture(zoomScene.texture());
+    zoomView.setParent(G::scene().mainView());
+    zoomScene.setVisible(false);
+}
+
+void Output::zoomedDrawEnd() noexcept
+{
+    /* Return everything to its place */
+    G::compositor()->rootView.setParent(G::scene().mainView());
+    zoomView.setParent(nullptr);
+    zoomScene.setParent(nullptr);
+    G::scene().enableAutoRepaint(true);
+}
+
+void Output::setZoom(Float32 newZoom) noexcept
+{
+    const Float32 prevZoom { zoom };
+    zoom = newZoom;
+
+    if (zoom > 1.f)
+        zoom = 1.f;
+    else if (newZoom < 0.25f)
+        zoom = 0.25f;
+
+    if (prevZoom != zoom)
+        repaint();
 }
