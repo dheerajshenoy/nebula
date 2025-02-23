@@ -162,7 +162,7 @@ void Compositor::focusNextMonitor(const bool &focusOld) noexcept {
         return;
 
     m_monitor_index++;
-    Output* output = static_cast<Output*>(this->outputs()).at(m_monitor_index);
+    Output* output = static_cast<Output*>(this->outputs().at(m_monitor_index));
 
     const auto &pos = output->pos();
     const auto &size = output->size();
@@ -179,7 +179,7 @@ void Compositor::focusPrevMonitor(const bool &focusOld) noexcept {
         return;
 
     m_monitor_index--;
-    Output* output = static_cast<Output*>(this->outputs()).at(m_monitor_index);
+    Output* output = static_cast<Output*>(this->outputs().at(m_monitor_index));
 
     const auto &pos = output->pos();
     const auto &size = output->size();

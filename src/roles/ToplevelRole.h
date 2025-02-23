@@ -15,7 +15,7 @@ class ToplevelRole final : public LToplevelRole
 {
 public:
     ToplevelRole(const void *params) noexcept;
-    Surface *surf() noexcept { return static_cast<Surface*>(surface()); }
+    Surface *surf() noexcept { return reinterpret_cast<Surface*>(surface()); }
     std::unique_ptr<SSD> ssd;
     const LPoint &rolePos() const override;
     void configureRequest() override;
