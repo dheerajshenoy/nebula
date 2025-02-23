@@ -14,11 +14,12 @@ class LayoutManager {
 public:
     LayoutManager(Output *output);
     void addSurface(Surface *surface) noexcept;
-    void removeSurface(Surface *surface) noexcept;
+    void removeSurface(Surface *surface, const bool &focusPrevious = true) noexcept;
     void updateLayout() noexcept;
     void focusNextWindow() noexcept;
     void focusPrevWindow() noexcept;
     void focusWindow(Surface *surface) noexcept;
+    void removeFocusFromWindow(Surface *surface) noexcept;
     void focusOld() noexcept;
     void setFocusIndex(const int &index) noexcept;
     inline int focusIndex() const noexcept { return m_focus_index; }
@@ -32,6 +33,7 @@ public:
     void moveWindowNextMonitor() noexcept;
     void moveWindowPrevMonitor() noexcept;
     void moveWindowToMonitor(Surface *surface, Output *output) noexcept;
+    inline std::vector<Surface*> surfaces() const noexcept { return m_surfaces; }
 
 private:
     std::vector<Surface *> m_surfaces;

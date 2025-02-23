@@ -19,13 +19,11 @@ void LayoutManager::addSurface(Surface *surface) noexcept {
     }
 
     m_surfaces.push_back(surface);
-
     focusWindow(surface);
-
     updateLayout();
 }
 
-void LayoutManager::removeSurface(Surface *surface) noexcept {
+void LayoutManager::removeSurface(Surface *surface, const bool &focusPrevious) noexcept {
     if (!surface)
         return;
 
@@ -37,7 +35,11 @@ void LayoutManager::removeSurface(Surface *surface) noexcept {
         if (wasFocused) {
             if (!m_surfaces.empty()) {
                 m_focus_index = m_surfaces.size() - 1;
-                focusWindow(m_surfaces[m_focus_index]);
+
+                if (focusPrevious) {
+                    focusWindow(m_surfaces.at(m_focus_index));
+                }
+
             } else {
                 m_focus_index = -1;
             }
@@ -98,7 +100,6 @@ void LayoutManager::updateLayout() noexcept {
 
         if (!surface->mapped() || surface->minimized())
             return;
-
 
         if (surface->mapped() && surface->tl()) {
             auto tl = surface->tl();
@@ -184,7 +185,8 @@ void LayoutManager::focusNextWindow() noexcept {
 }
 
 void LayoutManager::focusWindow(Surface *surface) noexcept {
-    if (!surface || !surface->mapped()) return;
+    if (!surface)
+        return;
 
     // Find the index of the window in the surface list
     auto it = std::find(m_surfaces.begin(), m_surfaces.end(), surface);
@@ -199,6 +201,17 @@ void LayoutManager::focusWindow(Surface *surface) noexcept {
     auto tl = surface->tl();
     if (tl && !tl->activated()) {
         tl->configureState(tl->state() | ToplevelRole::Activated);
+    }
+}
+
+void removeFocusFromWindow(Surface *surface) noexcept {
+
+    if (!surface)
+        return;
+
+    auto tl = surface->tl();
+    if (tl && !tl->activated()) {
+        tl->configureState(tl->state() | ~ToplevelRole::Activated);
     }
 }
 
@@ -304,7 +317,6 @@ void LayoutManager::focusOld() noexcept {
     focusWindow(m_surfaces.at(m_focus_index));
 }
 
-
 void LayoutManager::moveWindowNextMonitor() noexcept {
     auto _compositor = static_cast<Compositor*>(compositor());
     auto monIndex = _compositor->monitorIndex();
@@ -316,8 +328,8 @@ void LayoutManager::moveWindowNextMonitor() noexcept {
     monIndex++;
     auto window = focusedWindow();
     auto output = static_cast<Output*>(_compositor->outputs().at(monIndex));
+    _compositor->focusNextMonitor(false);
     moveWindowToMonitor(window, output);
-    _compositor->focusNextMonitor();
 }
 
 void LayoutManager::moveWindowPrevMonitor() noexcept {
@@ -330,18 +342,18 @@ void LayoutManager::moveWindowPrevMonitor() noexcept {
     monIndex--;
     auto window = focusedWindow();
     auto output = static_cast<Output*>(_compositor->outputs().at(monIndex));
+    _compositor->focusPrevMonitor(false);
     moveWindowToMonitor(window, output);
-    _compositor->focusPrevMonitor();
 }
 
 void LayoutManager::moveWindowToMonitor(Surface *surface, Output *output) noexcept {
     if (!surface || !output)
         return;
 
+    this->removeSurface(surface, false);
     auto newLayoutManager = output->layoutManager();
-
-    this->removeSurface(surface);
     newLayoutManager->addSurface(surface);
+    // output->layoutManager()->focusWindow(surface);
     newLayoutManager->focusWindow(surface);
     // Add monitor change signal
 

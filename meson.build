@@ -1,6 +1,6 @@
 project(
     'Nebula',
-    'c','cpp',
+    'cpp',
     version : '0.1.0',
     meson_version: '>= 0.60.0',
     default_options: [
@@ -16,7 +16,7 @@ sdbus = dependency(['libsystemd', 'libelogind', 'basu'])
 glesv2_dep = dependency('glesv2')
 wayland_server_dep = dependency('wayland-server')
 fontconfig_dep = dependency('fontconfig')
-freetype_dep = dependency('freetype2')
+# freetype_dep = dependency('freetype2')
 icuuc_dep = dependency('icu-uc')
 
 # List C/C++ source files stored in ./src
@@ -31,6 +31,7 @@ sources = files(
     'src/SessionLockManager.cpp',
     'src/Surface.cpp',
     'src/util.hpp',
+  'src/Workspace.cpp',
 
     # Input
     'src/input/Clipboard.cpp',
@@ -71,10 +72,10 @@ executable(
         pixman_dep,
         libinput_dep,
         sdbus,
-        glesv2_dep,
         wayland_server_dep,
-        fontconfig_dep,
-        freetype_dep,
-        icuuc_dep
+        # glesv2_dep,
+        # fontconfig_dep,
+        # freetype_dep,
+        # icuuc_dep
     ],
     install : true)

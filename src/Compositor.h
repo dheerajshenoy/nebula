@@ -19,8 +19,8 @@ class Compositor final : public LCompositor {
 public:
     /* A single scene to drive all outputs and input events */
     Scene scene;
-    void focusNextMonitor() noexcept;
-    void focusPrevMonitor() noexcept;
+    void focusNextMonitor(const bool &focusOld = true) noexcept;
+    void focusPrevMonitor(const bool &focusOld = true) noexcept;
     inline int monitorIndex() const noexcept { return m_monitor_index; }
     inline size_t nOutputs() const noexcept { return this->outputs().size(); }
     /* Cursors, textures, etc */

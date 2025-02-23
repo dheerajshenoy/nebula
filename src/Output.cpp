@@ -7,15 +7,21 @@
 #include "Compositor.h"
 #include "Surface.h"
 #include "utils/Global.h"
+#include "Workspace.hpp"
 
-Output::Output(const void *params) : LOutput(params) {
-    m_layoutManager = new LayoutManager(this);
-    m_current_workspace = 0;
-}
+Output::Output(const void *params) : LOutput(params),
+    m_current_workspace(0) {}
 
 void Output::initializeGL()
 {
     G::scene().handleInitializeGL(this);
+
+    m_workspaces.reserve(9);
+
+    for (int i=0; i < 9; i++) {
+        Workspace *workspace = new Workspace(this);
+        m_workspaces.push_back(workspace);
+    }
 
     /* Fade-in animation example */
 
@@ -131,7 +137,7 @@ void Output::availableGeometryChanged()
 {
     /* Refer to the default implementation in the documentation. */
     const LRect availGeo { pos() + availableGeometry().pos(), availableGeometry().size() };
-    m_layoutManager->setAvailableGeometry(availGeo);
+    layoutManager()->setAvailableGeometry(availGeo);
 }
 
 Surface *Output::searchFullscreenSurface() const noexcept
@@ -179,4 +185,14 @@ bool Output::tryDirectScanout(Surface *surface) noexcept
         surface->requestNextFrame();
 
     return ret;
+}
+
+LayoutManager* Output::layoutManager() noexcept {
+    return m_workspaces.at(m_current_workspace)->layoutManager();
+}
+
+void Output::setCurrentWorkspace(const size_t &n) noexcept {
+    if (n >= m_workspaces.size())
+        return;
+
 }

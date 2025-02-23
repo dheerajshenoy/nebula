@@ -157,7 +157,7 @@ bool Compositor::globalsFilter(LClient *client, LGlobal *global)
 return true;
 }
 
-void Compositor::focusNextMonitor() noexcept {
+void Compositor::focusNextMonitor(const bool &focusOld) noexcept {
     if (m_monitor_index == this->outputs().size() - 1)
         return;
 
@@ -169,10 +169,12 @@ void Compositor::focusNextMonitor() noexcept {
 
     cursor()->setPos(pos.x() + size.width() / 2, pos.y() + size.height() / 2);
 
-    output->layoutManager()->focusOld();
+    if (focusOld) {
+        output->layoutManager()->focusOld();
+    }
 }
 
-void Compositor::focusPrevMonitor() noexcept {
+void Compositor::focusPrevMonitor(const bool &focusOld) noexcept {
     if (m_monitor_index == 0)
         return;
 
@@ -184,5 +186,7 @@ void Compositor::focusPrevMonitor() noexcept {
 
     cursor()->setPos(pos.x() + size.width() / 2, pos.y() + size.height() / 2);
 
-    output->layoutManager()->focusOld();
+    if (focusOld) {
+        output->layoutManager()->focusOld();
+    }
 }

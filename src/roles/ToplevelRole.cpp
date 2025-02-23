@@ -3,6 +3,7 @@
 #include "ToplevelRole.h"
 #include "../Surface.h"
 #include "../utils/Settings.h"
+#include "../LayoutManager.hpp"
 
 ToplevelRole::ToplevelRole(const void *params) noexcept : LToplevelRole(params)
 {
@@ -235,4 +236,14 @@ void ToplevelRole::preferredDecorationModeChanged()
 void ToplevelRole::decorationModeChanged() noexcept
 {
 
+}
+
+void ToplevelRole::closeRequest() {
+    close();
+
+
+    Output* output = static_cast<Output*>(cursor()->output());
+    Surface *surface = static_cast<Surface*>(this->surface());
+
+    output->layoutManager()->removeSurface(surface);
 }

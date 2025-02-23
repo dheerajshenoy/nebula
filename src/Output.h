@@ -76,11 +76,12 @@ LSolidColorView fadeInView { {0.f, 0.f, 0.f } };
 
 Surface *searchFullscreenSurface() const noexcept;
 bool tryDirectScanout(Surface *surface) noexcept;
-void setCurrentWorkspace(const int &n) noexcept;
-inline LayoutManager* layoutManager() noexcept { return m_layoutManager; }
+void setCurrentWorkspace(const size_t &n) noexcept;
+LayoutManager* layoutManager() noexcept;
+inline Workspace* workspace() const noexcept { return m_workspaces[m_current_workspace]; }
 
 private:
-    LayoutManager *m_layoutManager;
+    std::vector<Workspace*> m_workspaces;
     int m_current_workspace;
 };
 

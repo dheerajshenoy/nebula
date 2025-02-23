@@ -3,6 +3,7 @@
 
 #include <LKeyboard.h>
 #include <LCursor.h>
+#include <iostream>
 
 using namespace Louvre;
 
