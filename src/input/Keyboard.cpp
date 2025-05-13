@@ -40,104 +40,118 @@ void Keyboard::keyEvent(const LKeyboardKeyEvent &event)
 
     const std::string &terminal = "alacritty";
 
-    // Launch terminal
-    if (LEFT_META && event.keyCode() == KEY_ENTER && event.state() == LKeyboardKeyEvent::Pressed) {
-        if (LEFT_SHIFT) {
-            LLauncher::launch(terminal);
-        } else {
-            output->layoutManager()->swapMaster();
-        }
-    }
+    if (event.state() == LKeyboardKeyEvent::Pressed) {
 
-    // Kill focused window
-    if (LEFT_META && LEFT_SHIFT && event.keyCode() == KEY_Q && event.state() == LKeyboardKeyEvent::Pressed) {
-        if (LSurface* focusedSurface = focus()) {
-            if (focusedSurface->toplevel()) {
-                focusedSurface->toplevel()->closeRequest();
+        // Launch terminal
+        if (LEFT_META && event.keyCode() == KEY_ENTER) {
+            if (LEFT_SHIFT) {
+                LLauncher::launch(terminal);
+            } else {
+                output->layoutManager()->swapMaster();
             }
         }
-    }
 
-    // Rofi
-    if (LEFT_META && event.keyCode() == KEY_P && event.state() == LKeyboardKeyEvent::Pressed) {
-        LLauncher::launch("rofi -show drun");
-        return;
-    }
-
-    // Kill nebula
-
-    if (LEFT_META && LEFT_SHIFT && event.keyCode() == KEY_C && event.state() == LKeyboardKeyEvent::Pressed) {
-        compositor()->finish();
-        return;
-    }
-
-    // togglefloating
-    if (LEFT_META && event.keyCode() == KEY_T && event.state() == LKeyboardKeyEvent::Pressed) {
-        if (Surface* focusedSurface = static_cast<Surface*>(focus())) {
-            focusedSurface->toggleFloating();
+        // Kill focused window
+        if (LEFT_META && LEFT_SHIFT && event.keyCode() == KEY_Q) {
+            if (LSurface* focusedSurface = focus()) {
+                if (focusedSurface->toplevel()) {
+                    focusedSurface->toplevel()->closeRequest();
+                }
+            }
         }
-        return;
-    }
 
-    if (LEFT_META && event.keyCode() == KEY_COMMA && event.state() == LKeyboardKeyEvent::Pressed) {
-        static_cast<Compositor*>(compositor())->focusPrevMonitor();
-        return;
-    }
-
-
-    if (LEFT_META && event.keyCode() == KEY_DOT && event.state() == LKeyboardKeyEvent::Pressed) {
-        static_cast<Compositor*>(compositor())->focusNextMonitor();
-        return;
-    }
-
-    if (LEFT_META && event.keyCode() == KEY_F && event.state() == LKeyboardKeyEvent::Pressed) {
-        if (Surface* focusedSurface = static_cast<Surface*>(focus())) {
-            focusedSurface->toggleFullscreen();
+        // Rofi
+        if (LEFT_META && event.keyCode() == KEY_P) {
+            LLauncher::launch("rofi -show drun");
+            return;
         }
-        return;
-    }
 
-    if (LEFT_META && event.keyCode() == KEY_L && event.state() == LKeyboardKeyEvent::Pressed) {
-        output->layoutManager()->increaseMasterWidth(0.05);
-        return;
-    }
+        // Kill nebula
 
-    if (LEFT_META && event.keyCode() == KEY_H && event.state() == LKeyboardKeyEvent::Pressed) {
-        output->layoutManager()->decreaseMasterWidth(0.05);
-        return;
-    }
-
-    // focus next window
-    if (LEFT_META && event.keyCode() == KEY_J && event.state() == LKeyboardKeyEvent::Pressed) {
-        if (LEFT_SHIFT) {
-            output->layoutManager()->moveWindowDown();
-        } else {
-            output->layoutManager()->focusNextWindow();
+        if (LEFT_META && LEFT_SHIFT && event.keyCode() == KEY_C) {
+            compositor()->finish();
+            return;
         }
-        return;
-    }
 
-    // focus previous window
-    if (LEFT_META && event.keyCode() == KEY_K && event.state() == LKeyboardKeyEvent::Pressed) {
-        if (LEFT_SHIFT) {
-            output->layoutManager()->moveWindowUp();
-        } else {
-            output->layoutManager()->focusPrevWindow();
+        // togglefloating
+        if (LEFT_META && event.keyCode() == KEY_T) {
+            if (Surface* focusedSurface = static_cast<Surface*>(focus())) {
+                focusedSurface->toggleFloating();
+            }
+            return;
         }
-        return;
+
+        if (LEFT_META && event.keyCode() == KEY_COMMA) {
+            static_cast<Compositor*>(compositor())->focusPrevMonitor();
+            return;
+        }
+
+
+        if (LEFT_META && event.keyCode() == KEY_DOT) {
+            static_cast<Compositor*>(compositor())->focusNextMonitor();
+            return;
+        }
+
+        if (LEFT_META && event.keyCode() == KEY_F) {
+            if (Surface* focusedSurface = static_cast<Surface*>(focus())) {
+                focusedSurface->toggleFullscreen();
+            }
+            return;
+        }
+
+        if (LEFT_META && event.keyCode() == KEY_L) {
+            output->layoutManager()->increaseMasterWidth(0.05);
+            return;
+        }
+
+        if (LEFT_META && event.keyCode() == KEY_H) {
+            output->layoutManager()->decreaseMasterWidth(0.05);
+            return;
+        }
+
+        // focus next window
+        if (LEFT_META && event.keyCode() == KEY_J) {
+            if (LEFT_SHIFT) {
+                output->layoutManager()->moveWindowDown();
+            } else {
+                output->layoutManager()->focusNextWindow();
+            }
+            return;
+        }
+
+        // focus previous window
+        if (LEFT_META && event.keyCode() == KEY_K) {
+            if (LEFT_SHIFT) {
+                output->layoutManager()->moveWindowUp();
+            } else {
+                output->layoutManager()->focusPrevWindow();
+            }
+            return;
+        }
+
+        // Move window to next monitor
+        if (LEFT_META && event.keyCode() == KEY_O) {
+            output->layoutManager()->moveWindowNextMonitor();
+            return;
+        }
+
+        // Move window to prev monitor
+        if (LEFT_META && event.keyCode() == KEY_I) {
+            output->layoutManager()->moveWindowPrevMonitor();
+            return;
+        }
+
+        if (LEFT_META && event.keyCode() == KEY_1)  {
+            output->setWorkspace(0);
+            return;
+        }
+
+        if (LEFT_META && event.keyCode() == KEY_2)  {
+            output->setWorkspace(1);
+            return;
+        }
     }
 
-    // Move window to next monitor
-    if (LEFT_META && event.keyCode() == KEY_O && event.state() == LKeyboardKeyEvent::Pressed) {
-        output->layoutManager()->moveWindowNextMonitor();
-        return;
-    }
-
-    // Move window to prev monitor
-    if (LEFT_META && event.keyCode() == KEY_I && event.state() == LKeyboardKeyEvent::Pressed) {
-        output->layoutManager()->moveWindowPrevMonitor();
-        return;
-    }
 
     G::scene().handleKeyboardKeyEvent(event, LScene::WaylandEvents | LScene::PointerConstraints);
 

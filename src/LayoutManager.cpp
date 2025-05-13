@@ -1,11 +1,12 @@
 #include "LayoutManager.hpp"
+#include "LNamespaces.h"
 #include "roles/ToplevelRole.h"
 #include "Output.h"
 #include "util.hpp"
 #include "Compositor.h"
+#include "Workspace.hpp"
 
 LayoutManager::LayoutManager(Output *output) : m_output(output) {
-    m_availGeo.setSize(output->availableGeometry().size());
 }
 
 void LayoutManager::addSurface(Surface *surface) noexcept {
@@ -18,6 +19,11 @@ void LayoutManager::addSurface(Surface *surface) noexcept {
         m_focus_index = m_surfaces.size();
     }
 
+    // auto w = workspace();
+    // auto v = surface->getView();
+    // w->insertAfter(v);
+    // v->setParent(&G);
+
     m_surfaces.push_back(surface);
     focusWindow(surface);
     updateLayout();
@@ -29,8 +35,10 @@ void LayoutManager::removeSurface(Surface *surface, const bool &focusPrevious) n
 
     auto it = std::find(m_surfaces.begin(), m_surfaces.end(), surface);
     if (it != m_surfaces.end()) {
+        surface->getView()->setParent(nullptr);
         bool wasFocused = (*it == m_surfaces[m_focus_index]);
         m_surfaces.erase(it);
+
 
         if (wasFocused) {
             if (!m_surfaces.empty()) {
@@ -54,8 +62,10 @@ void LayoutManager::removeSurface(Surface *surface, const bool &focusPrevious) n
 void LayoutManager::updateLayout() noexcept {
     if (m_surfaces.empty()) return;
 
-    LSize containerSize = m_availGeo.size();
-    LSize containerPos = m_output->pos();
+    auto availGeo = m_output->availableGeometry();
+
+    LSize containerSize = availGeo.size();
+    LSize containerPos = availGeo.pos();
 
     // TODO: Filter floating windows correctly
     std::vector<Surface*> tiledWindows;
@@ -81,7 +91,7 @@ void LayoutManager::updateLayout() noexcept {
             tl->extraGeometry().top + tl->extraGeometry().bottom
         };
 
-        if (surface->mapped() && surface->tl()) {
+        if (surface->tl()) {
             surface->setPos({m_gap + containerPos.x(), m_gap + containerPos.y()});
             tl->configureSize({
                 containerSize.width() - extra.width() - 2 * m_gap,
@@ -113,19 +123,21 @@ void LayoutManager::updateLayout() noexcept {
                 // Master window takes the left portion
                 surface->setPos({m_gap + containerPos.x(), m_gap + containerPos.y()});
                 tl->configureSize({
-                    masterWidth - extra.width(),
+                    masterWidth - extra.width() - m_gap,
                     containerSize.height() - extra.height() - 2 * m_gap
                 });
             } else {
+                int stackPosY = containerPos.y() + (i - 1) * (stackHeight + m_gap) + m_gap;
+
                 // Stack windows are arranged on the right
                 surface->setPos({
                     containerPos.x() + masterWidth + m_gap,
-                    containerPos.y() + (i - 1) * (stackHeight + m_gap) + m_gap
+                    stackPosY
                 });
 
                 tl->configureSize({
-                    stackWidth - extra.width(),
-                    stackHeight - extra.height() - m_gap
+                    stackWidth - extra.width() - m_gap,
+                    stackHeight - extra.height() - m_gap,
                 });
             }
         }
@@ -234,7 +246,6 @@ void LayoutManager::setFocusIndex(const int &index) noexcept {
 }
 
 void LayoutManager::setAvailableGeometry(const LRect &rect) noexcept {
-    m_availGeo = rect;
     updateLayout();
 }
 

@@ -15,6 +15,7 @@ public:
     LayoutManager(Output *output);
     void addSurface(Surface *surface) noexcept;
     void removeSurface(Surface *surface, const bool &focusPrevious = true) noexcept;
+    inline Workspace* workspace() { return m_output->workspace(); }
     void updateLayout() noexcept;
     void focusNextWindow() noexcept;
     void focusPrevWindow() noexcept;
@@ -38,8 +39,7 @@ public:
 private:
     std::vector<Surface *> m_surfaces;
     int m_focus_index = 0;
-    int m_gap = 0;
-    LRect m_availGeo;
+    int m_gap = 10;
     float m_masterRatio = 0.6f;
     Output *m_output;
     bool m_cycle_window_focus = true;

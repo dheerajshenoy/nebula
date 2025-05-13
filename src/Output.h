@@ -30,9 +30,9 @@ public:
     LSolidColorView fadeInView { {0.f, 0.f, 0.f } };
     Surface *searchFullscreenSurface() const noexcept;
     bool tryDirectScanout(Surface *surface) noexcept;
-    void setCurrentWorkspace(const size_t &n) noexcept;
+    void setWorkspace(const size_t &n) noexcept;
     LayoutManager* layoutManager() noexcept;
-    inline Workspace* workspace() const noexcept { return m_workspaces[m_current_workspace]; }
+    inline Workspace* workspace() const noexcept { return m_workspaces.at(m_workspace_index); }
     LLayerView workspacesContainer;
 
     void zoomedDrawBegin() noexcept;
@@ -45,7 +45,7 @@ public:
 
 private:
     std::vector<Workspace*> m_workspaces;
-    int m_current_workspace;
+    int m_workspace_index;
 };
 
 #endif // OUTPUT_H

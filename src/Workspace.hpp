@@ -15,9 +15,9 @@ public:
     LLayerView overlay { this };
     inline LayoutManager* layoutManager() noexcept { return m_layoutManager; }
     inline size_t index() const noexcept { return m_index; }
+    void clipChildren() noexcept;
     void stealChildren() noexcept;
     void returnChildren() noexcept;
-    void clipChildren() noexcept;
     void show(const bool &state) noexcept;
 
 private:

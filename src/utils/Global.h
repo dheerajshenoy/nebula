@@ -2,6 +2,8 @@
 #define GLOBAL_H
 
 #include <LNamespaces.h>
+#include <list>
+#include <vector>
 
 using namespace Louvre;
 
@@ -12,6 +14,8 @@ class LayerView;
 class Assets;
 class Systemd;
 class Seat;
+class Surface;
+
 
 /* This is just a utility for quick access to the Compositor members and
  * to prevent type casting all the time */
@@ -37,6 +41,10 @@ static Scene &scene() noexcept;
 static LayerView *layers() noexcept;
 static Assets *assets() noexcept;
 static Systemd *systemd() noexcept;
+static std::list<Surface*>&surfaces() noexcept;
+static Output *mostIntersectedOuput(LView *view) noexcept;
+static const std::vector<Output*>& outputs() noexcept;
+static void enableClippingChildren(LView *parent, bool enabled) noexcept;
 
 struct Cursors
 {

@@ -9,15 +9,20 @@
 #include "utils/Global.h"
 #include "Workspace.hpp"
 
+
+
 Output::Output(const void *params) : LOutput(params),
-    m_current_workspace(0) {
+    m_workspace_index(0) {
     zoomScene.enableParentOffset(false);
     zoomView.enableDstSize(true);
     zoomView.setTranslucentRegion(&LRegion::EmptyRegion());
+
+    workspacesContainer.enableParentOffset(false);
+    workspacesContainer.setPos(0, 0);
+    workspacesContainer.setParent(&G::compositor()->workspacesLayer);
 }
 
 Output::~Output() {
-
     for (const auto &w : m_workspaces) {
         delete w;
     }
@@ -209,13 +214,20 @@ bool Output::tryDirectScanout(Surface *surface) noexcept
 }
 
 LayoutManager* Output::layoutManager() noexcept {
-    return m_workspaces.at(m_current_workspace)->layoutManager();
+    return m_workspaces.at(m_workspace_index)->layoutManager();
 }
 
-void Output::setCurrentWorkspace(const size_t &n) noexcept {
-    if (n >= m_workspaces.size())
+void Output::setWorkspace(const size_t &n) noexcept {
+    if (n >= m_workspaces.size() || m_workspace_index == n)
         return;
 
+    m_workspaces.at(m_workspace_index)->show(false);
+    this->repaint();
+    // enableVSync(true);
+    m_workspaces.at(n)->show(true);
+    m_workspace_index = n;
+
+    m_workspaces.at(n)->stealChildren();
 }
 
 void Output::zoomedDrawBegin() noexcept

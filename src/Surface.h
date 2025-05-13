@@ -1,11 +1,15 @@
 #ifndef SURFACE_H
 #define SURFACE_H
 
+#include <LLauncher.h>
 #include <LSurface.h>
 #include "scene/SurfaceView.h"
 #include <LCursor.h>
+#include <LLog.h>
 #include "Compositor.h"
 #include "Output.h"
+
+#include "Workspace.hpp"
 
 using namespace Louvre;
 
@@ -13,9 +17,9 @@ class ToplevelRole;
 
 class Surface final : public LSurface {
 public:
-    using LSurface::LSurface;
+    Surface(const void *params);
 
-SurfaceView view { this };
+SurfaceView view;
 
 ToplevelRole *tl() noexcept
 {
@@ -30,6 +34,8 @@ void layerChanged() override;
 void orderChanged() override;
 void mappingChanged() override;
 void minimizedChanged() override;
+void parentChanged() override;
+
 ToplevelRole *closestToplevelParent() const noexcept;
 
 void setFloating(const bool &state) noexcept;

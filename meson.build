@@ -35,6 +35,7 @@ sources = files(
     'src/Surface.cpp',
     'src/util.hpp',
     'src/Workspace.cpp',
+    'src/ipc.cpp',
 
     # Input
     'src/input/Clipboard.cpp',

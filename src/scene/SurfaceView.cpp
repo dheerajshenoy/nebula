@@ -5,8 +5,8 @@
 #include "LayerView.h"
 #include "../utils/Global.h"
 
-SurfaceView::SurfaceView(Surface *surface) noexcept :
-    LSurfaceView(reinterpret_cast<LSurface*>(surface), &G::layers()[LLayerMiddle])
+SurfaceView::SurfaceView(Surface *surface, LView *parent) noexcept :
+    LSurfaceView(reinterpret_cast<LSurface*>(surface), parent)
 {}
 
 bool SurfaceView::nativeMapped() const noexcept

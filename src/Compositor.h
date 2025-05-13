@@ -20,6 +20,9 @@ public:
     /* A single scene to drive all outputs and input events */
     Scene scene;
     LLayerView rootView { scene.mainView() };
+    LLayerView workspacesLayer { &rootView };
+    LLayerView surfacesLayer { &rootView };
+
     void focusNextMonitor(const bool &focusOld = true) noexcept;
     void focusPrevMonitor(const bool &focusOld = true) noexcept;
     inline int monitorIndex() const noexcept { return m_monitor_index; }
@@ -27,6 +30,7 @@ public:
     /* Cursors, textures, etc */
     std::unique_ptr<Assets> assets;
     std::unique_ptr<Systemd> systemd;
+
 protected:
     /* Triggered after calling start() from main.cpp */
     void initialized() override;

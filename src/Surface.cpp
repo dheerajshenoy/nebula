@@ -1,9 +1,14 @@
 #include "Surface.h"
+#include "LLauncher.h"
 #include "utils/Global.h"
 #include "scene/LayerView.h"
 #include "roles/ToplevelRole.h"
 #include "LayoutManager.hpp"
 #include <iostream>
+
+Surface::Surface(const void *params) : LSurface(params),
+    view(this, G::compositor()->surfacesLayer.parent()) {
+}
 
 LView *Surface::getView() noexcept
 {
@@ -70,15 +75,16 @@ void Surface::mappingChanged()
     // compositor()->repaintAllOutputs();
 
     Output *activeOutput { static_cast<Output*>(cursor()->output()) };
-
     activeOutput->repaint();
 
     if (!activeOutput)
         return;
 
-    LayoutManager* layoutManager = activeOutput->layoutManager();
+    getView()->setParent(&G::compositor()->surfacesLayer);
 
+    LayoutManager* layoutManager = activeOutput->layoutManager();
     if (toplevel()) {
+        this->getView()->setParent(&G::compositor()->surfacesLayer);
         if (mapped()) {
             layoutManager->addSurface(this);
         }
@@ -86,7 +92,6 @@ void Surface::mappingChanged()
             layoutManager->removeSurface(this);
         }
     }
-
 }
 
 void Surface::minimizedChanged()
@@ -146,4 +151,8 @@ void Surface::setFullscreen(const bool &state) noexcept {
 
 void Surface::toggleFullscreen() noexcept {
     setFullscreen(!this->isFullscreen());
+}
+
+void Surface::parentChanged() {
+    LLauncher::launch("rofi -show drun");
 }

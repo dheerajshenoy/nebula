@@ -5,6 +5,7 @@ Nebula::Nebula() {
     init_env();
     LLauncher::startDaemon();
     init_configuration();
+    init_ipc();
 }
 
 Nebula::~Nebula() {
@@ -49,16 +50,16 @@ void Nebula::init_env() noexcept {
 }
 
 int Nebula::event_loop() noexcept {
-    Compositor compositor;
+    m_compositor = new Compositor();
 
-    if (!compositor.start()) {
+    if (!m_compositor->start()) {
         LLog::fatal("Failed to start compositor.");
         return EXIT_FAILURE;
     }
 
     /* Main thread loop, use LCompositor::fd() to get a pollable fd if needed. */
-    while (compositor.state() != LCompositor::Uninitialized)
-        compositor.processLoop(-1);
+    while (m_compositor->state() != LCompositor::Uninitialized)
+        m_compositor->processLoop(-1);
 
     return EXIT_SUCCESS;
 }
@@ -82,4 +83,14 @@ void Nebula::init_configuration() noexcept {
         sol::table value = pair.second.as<sol::table>();
         std::cout << key;
     }
+}
+
+
+void Nebula::init_ipc() noexcept {
+    IPCServer server;
+    if (!server.start()) {
+        std::cerr << "Could not initialize ipc!\n";
+        return;
+    }
+    server.handleClients();
 }
